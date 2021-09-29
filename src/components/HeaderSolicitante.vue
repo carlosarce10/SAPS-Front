@@ -13,7 +13,8 @@
         </b-button>
       </div>
       <div class="col-1 offset-10">
-        <h3 class="titulo" style="color: white;">SAPS</h3>
+        <div class="vertical-line"></div>
+        <h3 class="titulo" style="color: white; margin-top: 10px;">SAPS</h3>
       </div>
     </div>
     <div
@@ -29,9 +30,19 @@
           alt=""
         />
       </div>
+      <hr />
       <div class="offcanvas-body">
         <p>Funciones</p>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.vertical-line {
+  width: 1px;
+  background-color: white;
+  height: 100%;
+  float: left;
+}
+</style>
