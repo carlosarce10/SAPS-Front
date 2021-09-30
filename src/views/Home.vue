@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div>
-      <HeaderInicio />
+      <HeaderSoli />
     </div>
     <div class="position-relative" style="margin-top: 18%;">
       <div
@@ -52,12 +52,13 @@
 
 <script>
 import Footer from '../components/Footer.vue';
-import HeaderInicio from '../components/HeaderInicio.vue';
+/* import HeaderInicio from '../components/HeaderInicio.vue'; */
+import HeaderSoli from '../components/HeaderSolicitante.vue';
 export default {
   name: 'Home',
   components: {
     Footer,
-    HeaderInicio,
+    HeaderSoli,
   },
   data() {
     return {
