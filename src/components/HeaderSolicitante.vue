@@ -32,7 +32,9 @@
       </div>
       <hr />
       <div class="offcanvas-body">
-        <p>Funciones</p>
+        <p>Perfil</p>
+        <p>Apoyo psicopedagógico</p>
+        <p>Consultar sesiones impartidas</p>
       </div>
     </div>
   </div>

@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from '../views/Home.vue';
 import Registro from '../views/Registro.vue';
 import InicioAdmin from '../views/Admin/InicioAdmin.vue';
+import InicioSolicitante from '../views/Solicitante/InicioSolicitante.vue'
 
 Vue.use(VueRouter)
 
@@ -13,14 +14,19 @@ const routes = [
         component: Home
     },
     {
+        path: "/registro",
+        name: "Registro",
+        component:  Registro
+    },
+    {
         path: "/administrador/inicio",
         name: "InicioAdmin",
         component: InicioAdmin
     },
     {
-        path: "/registro",
-        name: "Registro",
-        component:  Registro
+        path: "/solicitante/inicio",
+        name: "InicioSolicitante",
+        component:  InicioSolicitante
     }
 ]
 

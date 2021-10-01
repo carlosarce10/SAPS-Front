@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div>
-      <HeaderSoli />
+      <HeaderInicio />
     </div>
     <div
       class="inicioSesion col-3 position-absolute top-50 start-50 translate-middle shadow p-3 mb-5 rounded row"
@@ -44,13 +44,12 @@
 
 <script>
 import Footer from '../components/Footer.vue';
-/* import HeaderInicio from '../components/HeaderInicio.vue'; */
-import HeaderSoli from '../components/HeaderSolicitante.vue';
+import HeaderInicio from '../components/HeaderInicio.vue';
 export default {
   name: 'Home',
   components: {
     Footer,
-    HeaderSoli,
+    HeaderInicio,
   },
   data() {
     return {
@@ -63,6 +62,7 @@ export default {
     onSubmit(event) {
       event.preventDefault();
       alert(JSON.stringify(this.form));
+      this.$router.push({ name: 'InicioSolicitante' });
     },
   },
 };
