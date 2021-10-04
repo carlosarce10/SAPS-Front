@@ -3,6 +3,8 @@ import VueRouter from "vue-router";
 import Home from '../views/Home.vue';
 import Registro from '../views/Registro.vue';
 import InicioAdmin from '../views/Admin/InicioAdmin.vue';
+import GestionSintomas from '../views/Admin/GestionSintomas.vue';
+import GestionNiveles from '../views/Admin/GestionNiveles.vue';
 import InicioSolicitante from '../views/Solicitante/InicioSolicitante.vue'
 
 Vue.use(VueRouter)
@@ -22,6 +24,16 @@ const routes = [
         path: "/administrador/inicio",
         name: "InicioAdmin",
         component: InicioAdmin
+    },
+    {
+        path: "/administrador/gestionSitomas",
+        name: "GestionSintomas",
+        component: GestionSintomas
+    },
+    {
+        path: "/administrador/gestionNiveles",
+        name: "GestionNiveles",
+        component: GestionNiveles
     },
     {
         path: "/solicitante/inicio",
