@@ -35,18 +35,50 @@
           <b-button variant="outline-success"
             ><b-icon
               class="float-start"
-              icon="person"
+              icon="check-square"
               aria-hidden="true"
             ></b-icon>
-            Perfil
+            Solicitudes de apoyo
           </b-button>
           <b-button variant="outline-success"
             ><b-icon
               class="float-start"
-              icon="calendar3"
+              icon="card-checklist"
               aria-hidden="true"
             ></b-icon>
-            Consulta de sesiones</b-button
+            Gestión de carreras</b-button
+          >
+          <b-button variant="outline-success"
+            ><b-icon
+              class="float-start"
+              icon="card-checklist"
+              aria-hidden="true"
+            ></b-icon>
+            Gestión de divisiones</b-button
+          >
+          <b-button variant="outline-success"
+            ><b-icon
+              class="float-start"
+              icon="card-checklist"
+              aria-hidden="true"
+            ></b-icon>
+            Gestión de unidades adtvo</b-button
+          >
+          <b-button variant="outline-success"
+            ><b-icon
+              class="float-start"
+              icon="card-checklist"
+              aria-hidden="true"
+            ></b-icon>
+            Gestión de motivos</b-button
+          >
+          <b-button variant="outline-success"
+            ><b-icon
+              class="float-start"
+              icon="card-checklist"
+              aria-hidden="true"
+            ></b-icon>
+            Gestión de síntomas</b-button
           >
           <b-button variant="outline-success"
             ><b-icon
@@ -54,7 +86,7 @@
               icon="calendar-check"
               aria-hidden="true"
             ></b-icon>
-            Solicitar apoyo</b-button
+            Consulta de sesiones</b-button
           >
         </div>
       </div>

@@ -23,4 +23,7 @@
   padding-top: 1%;
   padding-bottom: 0.5%;
 }
+.table {
+  --bs-table-accent-bg: white !important;
+}
 </style>
