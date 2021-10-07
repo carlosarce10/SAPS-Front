@@ -5,6 +5,10 @@ import Registro from '../views/Registro.vue';
 import InicioAdmin from '../views/Admin/InicioAdmin.vue';
 import GestionSintomas from '../views/Admin/GestionSintomas.vue';
 import GestionNiveles from '../views/Admin/GestionNiveles.vue';
+import GestionCarreras from '../views/Admin/GestionCarreras.vue';
+import GestionDivisiones from '../views/Admin/GestionDivisiones.vue';
+import GestionAdtvo from '../views/Admin/GestionUnidadesAdtvo.vue';
+import GestionMotivos from '../views/Admin/GestionMotivos.vue';
 import InicioSolicitante from '../views/Solicitante/InicioSolicitante.vue'
 
 Vue.use(VueRouter)
@@ -34,6 +38,26 @@ const routes = [
         path: "/administrador/gestionNiveles",
         name: "GestionNiveles",
         component: GestionNiveles
+    },
+    {
+        path: "/administrador/gestionCarreras",
+        name: "GestionCarreras",
+        component: GestionCarreras
+    },
+    {
+        path: "/administrador/gestionDivisiones",
+        name: "GestionDivisiones",
+        component: GestionDivisiones
+    },
+    {
+        path: "/administrador/gestionUnidadAdtvo",
+        name: "GestionAdtvo",
+        component: GestionAdtvo
+    },
+    {
+        path: "/administrador/gestionMotivos",
+        name: "GestionMotivos",
+        component: GestionMotivos
     },
     {
         path: "/solicitante/inicio",

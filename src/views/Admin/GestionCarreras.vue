@@ -7,7 +7,7 @@
       <div class="row perfil rounded">
         <div class="col-12 float-start">
           <h4 class="float-start p-1">
-            Gestión de niveles académicos
+            Gestión de carreras
           </h4>
         </div>
       </div>
@@ -31,14 +31,14 @@
             <thead class="table-light">
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Niveles</th>
+                <th scope="col">Carrera</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <th scope="row">1</th>
-                <td>Ingeniería</td>
+                <td>Ingeniería en Desarrollo y Gestión de Software</td>
                 <td>
                   <b-button
                     type="button"
@@ -56,13 +56,13 @@
           </table>
         </div>
       </div>
-      <!-- Modal para editar niveles -->
+      <!-- Modal para editar carrera -->
       <div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Editar Niveles Académicos
+                Editar Carrera
               </h5>
               <button
                 type="button"
@@ -73,9 +73,9 @@
             </div>
             <div class="modal-body">
               <form @submit="onSubmit">
-                <label class="float-start">Niveles</label>
+                <label class="float-start">Carrera</label>
                 <input
-                  v-model="form.nivel"
+                  v-model="form.carrera"
                   type="text"
                   class="form-control"
                   required
@@ -95,7 +95,7 @@
           </div>
         </div>
       </div>
-      <!-- Modal para agregar niveles -->
+      <!-- Modal para agregar carrera -->
       <div
         class="modal fade"
         id="agregarModal"
@@ -106,7 +106,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Agregar Nivel Académico
+                Agregar Carrera
               </h5>
               <button
                 type="button"
@@ -117,9 +117,9 @@
             </div>
             <div class="modal-body">
               <form @submit="onSubmit">
-                <label class="float-start">Nivel</label>
+                <label class="float-start">Carrera</label>
                 <input
-                  v-model="form.nivel"
+                  v-model="form.carrera"
                   type="text"
                   class="form-control"
                   required
@@ -155,7 +155,7 @@ export default {
   data() {
     return {
       form: {
-        nivel: '',
+        carrera: '',
       },
     };
   },

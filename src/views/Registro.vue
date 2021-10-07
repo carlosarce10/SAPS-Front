@@ -91,10 +91,20 @@
               required
             />
           </div>
-          <div class="col-12">
-            <button type="submit" class="btn btn-primary mb-3 float-end">
-              Siguiente
-            </button>
+          <div class="row">
+            <div class="col-6">
+              <button
+                @click="regresarInicio()"
+                class="btn btn-danger mb-3 float-start"
+              >
+                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
+              </button>
+            </div>
+            <div class="col-6">
+              <button type="submit" class="btn btn-primary mb-3 float-end">
+                Siguiente
+              </button>
+            </div>
           </div>
         </div>
       </form>
@@ -326,6 +336,9 @@ export default {
       this.estudiante = false;
       this.docente = false;
       this.administrativo = false;
+    },
+    regresarInicio() {
+      this.$router.push({ name: 'Home' });
     },
   },
 };
