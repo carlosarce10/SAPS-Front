@@ -100,7 +100,7 @@
                     {{div.division}}
                    </option>
                 </b-form-select>
-              </form>
+              </form> 
             </div>
             <div class="modal-footer">
               <button
