@@ -7,7 +7,7 @@
       <div class="row perfil rounded">
         <div class="col-12 float-start">
           <h4 class="float-start p-1">
-            Gestión de divisiones
+            Gestión de divisiones académicas
           </h4>
         </div>
       </div>
@@ -25,6 +25,7 @@
           </b-button>
         </div>
       </div>
+      <!-- Tabla divisiones académicas -->
       <div class="row shadow rounded">
         <div class="col-12">
           <table class="table">
@@ -36,18 +37,26 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>DATIC</td>
+              <tr
+                v-for="(divisiones, item) in listaDivisiones"
+                :key="divisiones.idDivision"
+              >
+                <th>{{ item + 1 }}</th>
+                <td>{{ divisiones.division }}</td>
                 <td>
                   <b-button
+                    @click="datosDivision(divisiones.idDivision)"
                     type="button"
                     variant="outline-primary"
                     data-bs-toggle="modal"
                     data-bs-target="#editarModal"
                     ><b-icon icon="pencil-square" aria-hidden="true"></b-icon>
                   </b-button>
-                  <b-button type="button" variant="outline-danger" class="ml-1"
+                  <b-button
+                    @click="eliminar(divisiones.idDivision)"
+                    type="button"
+                    variant="outline-danger"
+                    class="ml-1"
                     ><b-icon icon="trash" aria-hidden="true"></b-icon>
                   </b-button>
                 </td>
@@ -56,13 +65,13 @@
           </table>
         </div>
       </div>
-      <!-- Modal para editar division -->
+      <!-- Modal para editar divisiones -->
       <div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Editar División
+                Editar Divisiones
               </h5>
               <button
                 type="button"
@@ -72,8 +81,8 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form @submit="onSubmit">
-                <label class="float-start">División</label>
+              <form>
+                <label class="float-start">Divisiones</label>
                 <input
                   v-model="form.division"
                   type="text"
@@ -90,12 +99,14 @@
               >
                 Cerrar
               </button>
-              <button type="button" class="btn btn-success">Guardar</button>
+              <button @click="editar()" type="button" class="btn btn-success">
+                Guardar
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <!-- Modal para agregar division -->
+      <!-- Modal para agregar divisiones -->
       <div
         class="modal fade"
         id="agregarModal"
@@ -106,7 +117,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Agregar División
+                Agregar Division
               </h5>
               <button
                 type="button"
@@ -116,8 +127,8 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form @submit="onSubmit">
-                <label class="float-start">División</label>
+              <form>
+                <label class="float-start">Division</label>
                 <input
                   v-model="form.division"
                   type="text"
@@ -134,7 +145,13 @@
               >
                 Cerrar
               </button>
-              <button type="button" class="btn btn-success">Guardar</button>
+              <button
+                @click="registrar()"
+                type="button"
+                class="btn btn-success"
+              >
+                Guardar
+              </button>
             </div>
           </div>
         </div>
@@ -147,6 +164,8 @@
 <script>
 import HeaderAdmin from '../../components/HeaderAdmin.vue';
 import Footer from '../../components/Footer.vue';
+import api from '../../util/api';
+
 export default {
   components: {
     HeaderAdmin,
@@ -157,9 +176,189 @@ export default {
       form: {
         division: '',
       },
+      listaDivisiones: [],
+      divisionEdit: {},
     };
   },
-  methods: {},
+  beforeMount() {
+    this.getDivisiones();
+  },
+  computed: {},
+  methods: {
+    getDivisiones() {
+      api
+        .doGet('saps/division/getAll')
+        .then((response) => (this.listaDivisiones = response.data))
+        .catch((error) => {
+          let errorResponse = error.response.data;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          }
+        })
+        .finally(() => (this.loading = false));
+    },
+    registrar() {
+      api
+        .doPost('saps/division/save', this.form)
+        .then(() => {
+          this.$swal({
+            title: 'La división académica se registro exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.getDivisiones();
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    eliminar(id) {
+      this.$swal({
+        title: '¿Estás seguro de eliminar esta división?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#00ab84',
+        cancelButtonColor: '#cf2115',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar',
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          api
+            .doDelete('saps/division/delete/' + id)
+            .then(() => {
+              this.$swal({
+                title: '¡División académica eliminada exitosamente!',
+                icon: 'success',
+              });
+              this.getDivisiones();
+            })
+            .catch((error) => {
+              let errorResponse = error;
+              if (errorResponse.errorExists) {
+                this.$swal({
+                  title: 'Oops! Ha ocurrido un error en el servidor.',
+                  html:
+                    "<span style='font-size:14pt'><b>" +
+                    errorResponse.code +
+                    '</b> ' +
+                    errorResponse.message +
+                    '<br>Contacte a su operador para más detalles.</span>',
+                  icon: 'error',
+                });
+              } else {
+                this.$swal({
+                  title: 'Oops! Ha ocurrido un error en el servidor.',
+                  html:
+                    "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
+                  icon: 'error',
+                });
+              }
+            })
+            .finally(() => (this.loading = false));
+        }
+      });
+    },
+    datosDivision(id) {
+      api
+        .doGet('saps/division/getOne/' + id)
+        .then((response) => {
+          console.log('response: ' + response.data);
+          this.form.id = response.data.idDivision;
+          this.form.division = response.data.division;
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Contacte a su operador para más detalles.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              html:
+                "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    editar() {
+      this.divisionEdit = {
+        idDivision: this.form.id,
+        division: this.form.division,
+      };
+      api
+        .doPut('saps/division/update', this.divisionEdit)
+        .then(() => {
+          this.$swal({
+            title: 'La división académica se ha editado exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.getDivisiones();
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    onReset() {
+      this.form.division = '';
+    },
+  },
 };
 </script>
 
