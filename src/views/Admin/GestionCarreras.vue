@@ -40,7 +40,7 @@
               <tr
                 v-for="(carreras, item) in listaCarreras"
                 :key="carreras.idCarrera"
-              >
+              > 
                 <th>{{ item + 1 }}</th>
                 <td>{{ carreras.carrera }}</td>
                 <td>

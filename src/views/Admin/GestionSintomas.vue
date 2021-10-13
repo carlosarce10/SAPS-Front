@@ -10,7 +10,7 @@
             Gestión de síntomas
           </h4>
         </div>
-      </div>
+      </div> 
     </div>
     <div class="container pt-2">
       <div class="row">
