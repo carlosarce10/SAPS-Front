@@ -89,6 +89,17 @@
                   class="form-control"
                   required
                 />
+                <label class="float-start">División académica</label>
+                <b-form-select 
+                  v-model="division" 
+                  size="sm" 
+                  class="form-select form-select-sm mt-3">
+                  <option v-for="div in listaDivisiones" 
+                    v-bind:key="div.division"
+                    v-bind:value="div.idDivision">
+                    {{div.division}}
+                   </option>
+                </b-form-select>
               </form>
             </div>
             <div class="modal-footer">
@@ -137,12 +148,12 @@
                 />
                 <label class="float-start">División académica</label>
                 <b-form-select 
-                  v-model="form.division" 
+                  v-model="division" 
                   size="sm" 
                   class="form-select form-select-sm mt-3">
                   <option v-for="div in listaDivisiones" 
-                    v-bind:key="div.idDivision"
-                    v-bind:value="div.division">
+                    v-bind:key="div.division"
+                    v-bind:value="div.idDivision">
                     {{div.division}}
                    </option>
                 </b-form-select>
@@ -186,11 +197,14 @@ export default {
     return {
       form: {
         carrera: '',
-        division: 0,
       },
+      division: 0,
       listaCarreras: [],
       carreraEdit: {},
       listaDivisiones: [],
+      carreras : {
+
+      }
     };
   },
   beforeMount() {
@@ -220,11 +234,11 @@ export default {
         .finally(() => (this.loading = false));
     },
     registrar() {
-
+      this.carreras = {carrera: this.form.carrera, division: {idDivision: this.division}}
       api
-        .doPost('saps/carrera/save', this.form)
+        .doPost('saps/carrera/save', this.carreras)
         .then(() => {
-          console.log('response: ' + this.form);
+          
           this.$swal({
             title: 'La carrera se registro exitosamente',
             icon: 'success',
@@ -334,9 +348,11 @@ export default {
         });
     },
     editar() {
+      //this.carreras = {carrera: this.form.carrera, division: {idDivision: this.division}}
       this.carreraEdit = {
         idCarrera: this.form.id,
         carrera: this.form.carrera,
+        division: {idDivision: this.division}
       };
       api
         .doPut('saps/carrera/update', this.carreraEdit)
