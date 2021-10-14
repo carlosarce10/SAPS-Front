@@ -25,6 +25,7 @@
           </b-button>
         </div>
       </div>
+      <!-- Tabla motivos -->
       <div class="row shadow rounded">
         <div class="col-12">
           <table class="table">
@@ -36,18 +37,26 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Autoestisma</td>
+              <tr
+                v-for="(motivos, item) in listaMotivos"
+                :key="motivos.idMotivo"
+              >
+                <th>{{ item + 1 }}</th>
+                <td>{{ motivos.motivo }}</td>
                 <td>
                   <b-button
+                    @click="datosMotivo(motivos.idMotivo)"
                     type="button"
                     variant="outline-primary"
                     data-bs-toggle="modal"
                     data-bs-target="#editarModal"
                     ><b-icon icon="pencil-square" aria-hidden="true"></b-icon>
                   </b-button>
-                  <b-button type="button" variant="outline-danger" class="ml-1"
+                  <b-button
+                    @click="eliminar(motivos.idMotivo)"
+                    type="button"
+                    variant="outline-danger"
+                    class="ml-1"
                     ><b-icon icon="trash" aria-hidden="true"></b-icon>
                   </b-button>
                 </td>
@@ -56,7 +65,7 @@
           </table>
         </div>
       </div>
-      <!-- Modal para editar motivos -->
+      <!-- Modal para editar los motivos -->
       <div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -72,7 +81,7 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form @submit="onSubmit">
+              <form>
                 <label class="float-start">Motivos</label>
                 <input
                   v-model="form.motivo"
@@ -90,12 +99,14 @@
               >
                 Cerrar
               </button>
-              <button type="button" class="btn btn-success">Guardar</button>
+              <button @click="editar()" type="button" class="btn btn-success">
+                Guardar
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <!-- Modal para agregar motivo -->
+      <!-- Modal para agregar motivos -->
       <div
         class="modal fade"
         id="agregarModal"
@@ -106,7 +117,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Agregar Motivo
+                Agregar Motivos
               </h5>
               <button
                 type="button"
@@ -116,8 +127,8 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form @submit="onSubmit">
-                <label class="float-start">Motivo</label>
+              <form>
+                <label class="float-start">Motivos</label>
                 <input
                   v-model="form.motivo"
                   type="text"
@@ -134,7 +145,13 @@
               >
                 Cerrar
               </button>
-              <button type="button" class="btn btn-success">Guardar</button>
+              <button
+                @click="registrar()"
+                type="button"
+                class="btn btn-success"
+              >
+                Guardar
+              </button>
             </div>
           </div>
         </div>
@@ -147,6 +164,8 @@
 <script>
 import HeaderAdmin from '../../components/HeaderAdmin.vue';
 import Footer from '../../components/Footer.vue';
+import api from '../../util/api';
+
 export default {
   components: {
     HeaderAdmin,
@@ -157,9 +176,189 @@ export default {
       form: {
         motivo: '',
       },
+      listaMotivos: [],
+      motivoEdit: {},
     };
   },
-  methods: {},
+  beforeMount() {
+    this.getMotivos();
+  },
+  computed: {},
+  methods: {
+    getMotivos() {
+      api
+        .doGet('saps/motivo/getAll')
+        .then((response) => (this.listaMotivos = response.data))
+        .catch((error) => {
+          let errorResponse = error.response.data;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          }
+        })
+        .finally(() => (this.loading = false));
+    },
+    registrar() {
+      api
+        .doPost('saps/motivo/save', this.form)
+        .then(() => {
+          this.$swal({
+            title: 'El motivo se registro exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.getMotivos();
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    eliminar(id) {
+      this.$swal({
+        title: '¿Estás seguro de eliminar este motivo?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#00ab84',
+        cancelButtonColor: '#cf2115',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar',
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          api
+            .doDelete('saps/motivo/delete/' + id)
+            .then(() => {
+              this.$swal({
+                title: '¡Motivo eliminado exitosamente!',
+                icon: 'success',
+              });
+              this.getMotivos();
+            })
+            .catch((error) => {
+              let errorResponse = error;
+              if (errorResponse.errorExists) {
+                this.$swal({
+                  title: 'Oops! Ha ocurrido un error en el servidor.',
+                  html:
+                    "<span style='font-size:14pt'><b>" +
+                    errorResponse.code +
+                    '</b> ' +
+                    errorResponse.message +
+                    '<br>Contacte a su operador para más detalles.</span>',
+                  icon: 'error',
+                });
+              } else {
+                this.$swal({
+                  title: 'Oops! Ha ocurrido un error en el servidor.',
+                  html:
+                    "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
+                  icon: 'error',
+                });
+              }
+            })
+            .finally(() => (this.loading = false));
+        }
+      });
+    },
+    datosMotivo(id) {
+      api
+        .doGet('saps/motivo/getOne/' + id)
+        .then((response) => {
+          console.log('response: ' + response.data);
+          this.form.id = response.data.idMotivo;
+          this.form.motivo = response.data.motivo;
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Contacte a su operador para más detalles.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              html:
+                "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    editar() {
+      this.motivoEdit = {
+        idMotivo: this.form.id,
+        motivo: this.form.motivo,
+      };
+      api
+        .doPut('saps/motivo/update', this.motivoEdit)
+        .then(() => {
+          this.$swal({
+            title: 'El motivo se ha editado exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.getMotivos();
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    onReset() {
+      this.form.motivo = '';
+    },
+  },
 };
 </script>
 
