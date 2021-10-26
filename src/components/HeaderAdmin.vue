@@ -32,7 +32,7 @@
       <hr />
       <div class="offcanvas-body">
         <div class="d-grid gap-2 col-9 mx-auto">
-          <b-button variant="outline-success"
+          <b-button href="/administrador/inicio" variant="outline-success"
             ><b-icon
               class="float-start"
               icon="check-square"
@@ -40,7 +40,9 @@
             ></b-icon>
             Solicitudes de apoyo
           </b-button>
-          <b-button variant="outline-success"
+          <b-button
+            href="/administrador/gestionCarreras"
+            variant="outline-success"
             ><b-icon
               class="float-start"
               icon="card-checklist"
@@ -48,7 +50,9 @@
             ></b-icon>
             Gestión de carreras</b-button
           >
-          <b-button variant="outline-success"
+          <b-button
+            href="/administrador/gestionDivisiones"
+            variant="outline-success"
             ><b-icon
               class="float-start"
               icon="card-checklist"
@@ -56,7 +60,9 @@
             ></b-icon>
             Gestión de divisiones</b-button
           >
-          <b-button variant="outline-success"
+          <b-button
+            href="/administrador/gestionUnidadAdtvo"
+            variant="outline-success"
             ><b-icon
               class="float-start"
               icon="card-checklist"
@@ -64,7 +70,9 @@
             ></b-icon>
             Gestión de unidades adtvo</b-button
           >
-          <b-button variant="outline-success"
+          <b-button
+            href="/administrador/gestionMotivos"
+            variant="outline-success"
             ><b-icon
               class="float-start"
               icon="card-checklist"
@@ -72,13 +80,25 @@
             ></b-icon>
             Gestión de motivos</b-button
           >
-          <b-button variant="outline-success"
+          <b-button
+            href="/administrador/gestionSitomas"
+            variant="outline-success"
             ><b-icon
               class="float-start"
               icon="card-checklist"
               aria-hidden="true"
             ></b-icon>
             Gestión de síntomas</b-button
+          >
+          <b-button
+            href="/administrador/gestionNiveles"
+            variant="outline-success"
+            ><b-icon
+              class="float-start"
+              icon="card-checklist"
+              aria-hidden="true"
+            ></b-icon>
+            Gestión de niveles</b-button
           >
           <b-button variant="outline-success"
             ><b-icon

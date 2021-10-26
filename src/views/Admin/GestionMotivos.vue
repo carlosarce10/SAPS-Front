@@ -7,11 +7,11 @@
       <div class="row perfil rounded">
         <div class="col-12 float-start">
           <h4 class="float-start p-1">
-            Gestión de niveles académicos
+            Gestión de motivos
           </h4>
         </div>
-      </div> 
-    </div>
+      </div>
+    </div> 
     <div class="container pt-2">
       <div class="row">
         <div class="col-12">
@@ -25,27 +25,27 @@
           </b-button>
         </div>
       </div>
-      <!-- Tabla -->
+      <!-- Tabla motivos -->
       <div class="row shadow rounded">
         <div class="col-12">
           <table class="table">
             <thead class="table-light">
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Niveles</th>
+                <th scope="col">Motivos</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="(niveles, item) in listaNiveles"
-                :key="niveles.idNivel"
+                v-for="(motivos, item) in listaMotivos"
+                :key="motivos.idMotivo"
               >
                 <th>{{ item + 1 }}</th>
-                <td>{{ niveles.nivel }}</td>
+                <td>{{ motivos.motivo }}</td>
                 <td>
                   <b-button
-                    @click="datosNivel(niveles.idNivel)"
+                    @click="datosMotivo(motivos.idMotivo)"
                     type="button"
                     variant="outline-primary"
                     data-bs-toggle="modal"
@@ -53,7 +53,7 @@
                     ><b-icon icon="pencil-square" aria-hidden="true"></b-icon>
                   </b-button>
                   <b-button
-                    @click="eliminar(niveles.idNivel)"
+                    @click="eliminar(motivos.idMotivo)"
                     type="button"
                     variant="outline-danger"
                     class="ml-1"
@@ -65,13 +65,13 @@
           </table>
         </div>
       </div>
-      <!-- Modal para editar niveles -->
+      <!-- Modal para editar los motivos -->
       <div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Editar Niveles Académicos
+                Editar Motivos
               </h5>
               <button
                 type="button"
@@ -82,9 +82,9 @@
             </div>
             <div class="modal-body">
               <form>
-                <label class="float-start">Niveles</label>
+                <label class="float-start">Motivos</label>
                 <input
-                  v-model="form.nivel"
+                  v-model="form.motivo"
                   type="text"
                   class="form-control"
                   required
@@ -106,7 +106,7 @@
           </div>
         </div>
       </div>
-      <!-- Modal para agregar niveles -->
+      <!-- Modal para agregar motivos -->
       <div
         class="modal fade"
         id="agregarModal"
@@ -117,7 +117,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Agregar Nivel Académico
+                Agregar Motivos
               </h5>
               <button
                 type="button"
@@ -128,9 +128,9 @@
             </div>
             <div class="modal-body">
               <form>
-                <label class="float-start">Nivel</label>
+                <label class="float-start">Motivos</label>
                 <input
-                  v-model="form.nivel"
+                  v-model="form.motivo"
                   type="text"
                   class="form-control"
                   required
@@ -174,22 +174,21 @@ export default {
   data() {
     return {
       form: {
-        id: '',
-        nivel: '',
+        motivo: '',
       },
-      listaNiveles: [],
-      nivelEdit: {},
+      listaMotivos: [],
+      motivoEdit: {},
     };
   },
   beforeMount() {
-    this.getNiveles();
+    this.getMotivos();
   },
   computed: {},
   methods: {
-    getNiveles() {
+    getMotivos() {
       api
-        .doGet('saps/nivel/getAll')
-        .then((response) => (this.listaNiveles = response.data))
+        .doGet('saps/motivo/getAll')
+        .then((response) => (this.listaMotivos = response.data))
         .catch((error) => {
           let errorResponse = error.response.data;
           if (errorResponse.errorExists) {
@@ -208,14 +207,14 @@ export default {
     },
     registrar() {
       api
-        .doPost('saps/nivel/save', this.form)
+        .doPost('saps/motivo/save', this.form)
         .then(() => {
           this.$swal({
-            title: 'El nivel se registro exitosamente',
+            title: 'El motivo se registro exitosamente',
             icon: 'success',
           });
           this.onReset();
-          this.getNiveles();
+          this.getMotivos();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -242,7 +241,7 @@ export default {
     },
     eliminar(id) {
       this.$swal({
-        title: '¿Estás seguro de eliminar este nivel?',
+        title: '¿Estás seguro de eliminar este motivo?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#00ab84',
@@ -253,13 +252,13 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           api
-            .doDelete('saps/nivel/delete/' + id)
+            .doDelete('saps/motivo/delete/' + id)
             .then(() => {
               this.$swal({
-                title: '¡Nivel eliminado exitosamente!',
+                title: '¡Motivo eliminado exitosamente!',
                 icon: 'success',
               });
-              this.getNiveles();
+              this.getMotivos();
             })
             .catch((error) => {
               let errorResponse = error;
@@ -287,13 +286,13 @@ export default {
         }
       });
     },
-    datosNivel(id) {
+    datosMotivo(id) {
       api
-        .doGet('saps/nivel/getOne/' + id)
+        .doGet('saps/motivo/getOne/' + id)
         .then((response) => {
           console.log('response: ' + response.data);
-          this.form.id = response.data.idNivel;
-          this.form.nivel = response.data.nivel;
+          this.form.id = response.data.idMotivo;
+          this.form.motivo = response.data.motivo;
         })
         .catch((error) => {
           let errorResponse = error;
@@ -319,19 +318,19 @@ export default {
         });
     },
     editar() {
-      this.nivelEdit = {
-        idNivel: this.form.id,
-        nivel: this.form.nivel,
+      this.motivoEdit = {
+        idMotivo: this.form.id,
+        motivo: this.form.motivo,
       };
       api
-        .doPut('saps/nivel/update', this.nivelEdit)
+        .doPut('saps/motivo/update', this.motivoEdit)
         .then(() => {
           this.$swal({
-            title: 'El nivel se ha editado exitosamente',
+            title: 'El motivo se ha editado exitosamente',
             icon: 'success',
           });
           this.onReset();
-          this.getNiveles();
+          this.getMotivos();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -357,7 +356,7 @@ export default {
         });
     },
     onReset() {
-      this.form.nivel = '';
+      this.form.motivo = '';
     },
   },
 };

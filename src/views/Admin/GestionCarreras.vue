@@ -7,10 +7,10 @@
       <div class="row perfil rounded">
         <div class="col-12 float-start">
           <h4 class="float-start p-1">
-            Gestión de niveles académicos
+            Gestión de carreras
           </h4>
         </div>
-      </div> 
+      </div>
     </div>
     <div class="container pt-2">
       <div class="row">
@@ -25,27 +25,27 @@
           </b-button>
         </div>
       </div>
-      <!-- Tabla -->
+      <!-- Tabla carreras -->
       <div class="row shadow rounded">
         <div class="col-12">
           <table class="table">
             <thead class="table-light">
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Niveles</th>
+                <th scope="col">Carrera</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="(niveles, item) in listaNiveles"
-                :key="niveles.idNivel"
-              >
+                v-for="(carreras, item) in listaCarreras"
+                :key="carreras.idCarrera"
+              > 
                 <th>{{ item + 1 }}</th>
-                <td>{{ niveles.nivel }}</td>
+                <td>{{ carreras.carrera }}</td>
                 <td>
                   <b-button
-                    @click="datosNivel(niveles.idNivel)"
+                    @click="datosCarrera(carreras.idCarrera)"
                     type="button"
                     variant="outline-primary"
                     data-bs-toggle="modal"
@@ -53,7 +53,7 @@
                     ><b-icon icon="pencil-square" aria-hidden="true"></b-icon>
                   </b-button>
                   <b-button
-                    @click="eliminar(niveles.idNivel)"
+                    @click="eliminar(carreras.idCarrera)"
                     type="button"
                     variant="outline-danger"
                     class="ml-1"
@@ -65,13 +65,13 @@
           </table>
         </div>
       </div>
-      <!-- Modal para editar niveles -->
+      <!-- Modal para editar carreras -->
       <div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Editar Niveles Académicos
+                Editar Carreras
               </h5>
               <button
                 type="button"
@@ -82,14 +82,25 @@
             </div>
             <div class="modal-body">
               <form>
-                <label class="float-start">Niveles</label>
+                <label class="float-start">Carreras</label>
                 <input
-                  v-model="form.nivel"
+                  v-model="form.carrera"
                   type="text"
                   class="form-control"
                   required
                 />
-              </form>
+                <label class="float-start">División académica</label>
+                <b-form-select 
+                  v-model="division" 
+                  size="sm" 
+                  class="form-select form-select-sm mt-3">
+                  <option v-for="div in listaDivisiones" 
+                    v-bind:key="div.division"
+                    v-bind:value="div.idDivision">
+                    {{div.division}}
+                   </option>
+                </b-form-select>
+              </form> 
             </div>
             <div class="modal-footer">
               <button
@@ -106,7 +117,7 @@
           </div>
         </div>
       </div>
-      <!-- Modal para agregar niveles -->
+      <!-- Modal para agregar carreras -->
       <div
         class="modal fade"
         id="agregarModal"
@@ -117,7 +128,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Agregar Nivel Académico
+                Agregar Carrera
               </h5>
               <button
                 type="button"
@@ -128,13 +139,24 @@
             </div>
             <div class="modal-body">
               <form>
-                <label class="float-start">Nivel</label>
+                <label class="float-start">Carrera</label>
                 <input
-                  v-model="form.nivel"
+                  v-model="form.carrera"
                   type="text"
                   class="form-control"
                   required
                 />
+                <label class="float-start">División académica</label>
+                <b-form-select 
+                  v-model="division" 
+                  size="sm" 
+                  class="form-select form-select-sm mt-3">
+                  <option v-for="div in listaDivisiones" 
+                    v-bind:key="div.division"
+                    v-bind:value="div.idDivision">
+                    {{div.division}}
+                   </option>
+                </b-form-select>
               </form>
             </div>
             <div class="modal-footer">
@@ -174,22 +196,27 @@ export default {
   data() {
     return {
       form: {
-        id: '',
-        nivel: '',
+        carrera: '',
       },
-      listaNiveles: [],
-      nivelEdit: {},
+      division: '',
+      listaCarreras: [],
+      carreraEdit: {},
+      listaDivisiones: [],
+      carreras : {
+
+      }
     };
   },
   beforeMount() {
-    this.getNiveles();
+    this.getCarreras();
+    this.getDivisiones();
   },
   computed: {},
   methods: {
-    getNiveles() {
+    getCarreras() {
       api
-        .doGet('saps/nivel/getAll')
-        .then((response) => (this.listaNiveles = response.data))
+        .doGet('saps/carrera/getAll')
+        .then((response) => (this.listaCarreras = response.data))
         .catch((error) => {
           let errorResponse = error.response.data;
           if (errorResponse.errorExists) {
@@ -207,15 +234,17 @@ export default {
         .finally(() => (this.loading = false));
     },
     registrar() {
+      this.carreras = {carrera: this.form.carrera, division: {idDivision: this.division}}
       api
-        .doPost('saps/nivel/save', this.form)
+        .doPost('saps/carrera/save', this.carreras)
         .then(() => {
+          
           this.$swal({
-            title: 'El nivel se registro exitosamente',
+            title: 'La carrera se registro exitosamente',
             icon: 'success',
           });
           this.onReset();
-          this.getNiveles();
+          this.getCarreras();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -242,7 +271,7 @@ export default {
     },
     eliminar(id) {
       this.$swal({
-        title: '¿Estás seguro de eliminar este nivel?',
+        title: '¿Estás seguro de eliminar esta carrera?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#00ab84',
@@ -253,13 +282,13 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           api
-            .doDelete('saps/nivel/delete/' + id)
+            .doDelete('saps/carrera/delete/' + id)
             .then(() => {
               this.$swal({
-                title: '¡Nivel eliminado exitosamente!',
+                title: '¡Carrera eliminada exitosamente!',
                 icon: 'success',
               });
-              this.getNiveles();
+              this.getCarreras();
             })
             .catch((error) => {
               let errorResponse = error;
@@ -287,19 +316,19 @@ export default {
         }
       });
     },
-    datosNivel(id) {
+    datosCarrera(id) {
       api
-        .doGet('saps/nivel/getOne/' + id)
+        .doGet('saps/carrera/getOne/' + id)
         .then((response) => {
           console.log('response: ' + response.data);
-          this.form.id = response.data.idNivel;
-          this.form.nivel = response.data.nivel;
+          this.form.id = response.data.idCarrera;
+          this.form.carrera = response.data.carrera;
         })
         .catch((error) => {
           let errorResponse = error;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: 'Oops! Ha ocurrido un error en el servidor.',
+              title: 'Oops! Ha zocurrido un error en el servidor.',
               html:
                 "<span style='font-size:14pt'><b>" +
                 errorResponse.code +
@@ -319,19 +348,21 @@ export default {
         });
     },
     editar() {
-      this.nivelEdit = {
-        idNivel: this.form.id,
-        nivel: this.form.nivel,
+      //this.carreras = {carrera: this.form.carrera, division: {idDivision: this.division}}
+      this.carreraEdit = {
+        idCarrera: this.form.id,
+        carrera: this.form.carrera,
+        division: {idDivision: this.division}
       };
       api
-        .doPut('saps/nivel/update', this.nivelEdit)
+        .doPut('saps/carrera/update', this.carreraEdit)
         .then(() => {
           this.$swal({
-            title: 'El nivel se ha editado exitosamente',
+            title: 'La carrera se ha editado exitosamente',
             icon: 'success',
           });
           this.onReset();
-          this.getNiveles();
+          this.getCarreras();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -356,11 +387,18 @@ export default {
           }
         });
     },
+    getDivisiones() {
+      api
+        .doGet('saps/division/getAll')
+        .then((response) => (this.listaDivisiones = response.data))
+    },
     onReset() {
-      this.form.nivel = '';
+      this.form.carrera = '';
+      this.form.division = '';
     },
   },
 };
+
 </script>
 
 <style scoped>

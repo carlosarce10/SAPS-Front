@@ -78,7 +78,7 @@
             <b-form-select
               required
               :options="tiposUsario"
-              v-model="form.tipoUsuario"
+              v-model="tipoUsuario"
               class="form-select"
             />
           </div>
@@ -91,15 +91,25 @@
               required
             />
           </div>
-          <div class="col-12">
-            <button type="submit" class="btn btn-primary mb-3 float-end">
-              Siguiente
-            </button>
+          <div class="row">
+            <div class="col-6">
+              <button
+                @click="regresarInicio()"
+                class="btn btn-danger mb-3 float-start"
+              >
+                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
+              </button>
+            </div>
+            <div class="col-6">
+              <button type="submit" class="btn btn-primary mb-3 float-end">
+                Siguiente
+              </button>
+            </div>
           </div>
         </div>
       </form>
       <!-- Registro datos estudiante -->
-      <form @submit="onSubmit" v-if="estudiante">
+      <form v-if="estudiante">
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">Matricula</label>
@@ -114,19 +124,33 @@
             <label class="float-start">Nivel Académico</label>
             <b-form-select
               required
-              :options="niveles"
               v-model="formAlumno.nivel"
               class="form-select"
-            />
+            >
+              <option
+                v-for="niveles in listaNiveles"
+                v-bind:key="niveles.nivel"
+                v-bind:value="niveles.idNivel"
+              >
+                {{ niveles.nivel }}
+              </option></b-form-select
+            >
           </div>
           <div class="mb-3 col-4">
             <label class="float-start">Carrera</label>
             <b-form-select
               required
-              :options="carreras"
               v-model="formAlumno.carrera"
               class="form-select"
-            />
+            >
+              <option
+                v-for="carreras in listaCarreras"
+                v-bind:key="carreras.carrera"
+                v-bind:value="carreras.idCarrera"
+              >
+                {{ carreras.carrera }}
+              </option></b-form-select
+            >
           </div>
           <div class="mb-3 col-4">
             <label class="float-start">Grado</label>
@@ -165,7 +189,11 @@
               </button>
             </div>
             <div class="col-6">
-              <button type="submit" class="btn btn-primary mb-3 float-end">
+              <button
+                type="submit"
+                @click="registroEstudiante()"
+                class="btn btn-primary mb-3 float-end"
+              >
                 Registrarme
               </button>
             </div>
@@ -176,13 +204,20 @@
       <form @submit="onSubmit" v-if="docente">
         <div class="row">
           <div class="mb-3 col-4">
-            <label class="float-start">División</label>
+            <label class="float-start">División académica</label>
             <b-form-select
-              required
-              :options="divisiones"
-              v-model="formDocente.division"
-              class="form-select"
-            />
+              v-model="division"
+              size="sm"
+              class="form-select form-select-sm mt-3"
+            >
+              <option
+                v-for="div in listaDivisiones"
+                v-bind:key="div.division"
+                v-bind:value="div.idDivision"
+              >
+                {{ div.division }}
+              </option>
+            </b-form-select>
           </div>
           <div class="row">
             <div class="col-6">
@@ -238,6 +273,8 @@
 <script>
 import HeaderInicio from '../components/HeaderInicio.vue';
 import Footer from '../components/Footer.vue';
+import api from '../util/api';
+
 export default {
   components: {
     HeaderInicio,
@@ -250,10 +287,10 @@ export default {
         apellidoP: '',
         apellidoM: '',
         correo: '',
-        sexo: '',
-        tipoUsuario: '',
         contrasenia: '',
+        sexo: '',
       },
+      tipoUsuario: '',
       formAlumno: {
         matricula: '',
         nivel: '',
@@ -268,10 +305,15 @@ export default {
       formAdmin: {
         departamento: '',
       },
+      listaDivisiones: [],
+      listaNiveles: [],
+      listaCarreras: [],
+      division: '',
       show: true,
       estudiante: false,
       administrativo: false,
       docente: false,
+      id: '',
       sexos: [
         { value: 1, text: 'Hombre' },
         { value: 2, text: 'Mujer' },
@@ -282,50 +324,148 @@ export default {
         { value: 2, text: 'Docente' },
         { value: 3, text: 'Administrativo' },
       ],
-      niveles: [
-        { value: 1, text: 'TSU' },
-        { value: 2, text: 'ING' },
-        { value: 3, text: 'LIC' },
-      ],
-      carreras: [
-        { value: 1, text: 'IDyGS' },
-        { value: 2, text: 'Diseño' },
-        { value: 3, text: 'Mecatrónica' },
-      ],
-      divisiones: [
-        { value: 1, text: 'DATIC' },
-        { value: 2, text: 'DATEFI' },
-        { value: 3, text: 'DAMI' },
-        { value: 3, text: 'DACEA' },
-      ],
-      departamentos: [
-        { value: 1, text: 'Depto. 1' },
-        { value: 2, text: 'Depto. 2' },
-        { value: 3, text: 'Depto. 3' },
-        { value: 3, text: 'Depto. 4' },
-      ],
     };
   },
+  beforeMount() {
+    this.getDivisiones();
+    this.getNiveles();
+    this.getCarreras();
+  },
+  computed: {},
   methods: {
-    onSubmit(event) {
-      event.preventDefault();
-      alert(JSON.stringify(this.form.tipoUsuario));
-      if (this.form.tipoUsuario == '1') {
+    onSubmit() {
+      this.form = {
+        nombre: this.form.nombre,
+        apellidoPaterno: this.form.apellidoP,
+        apellidoMaterno: this.form.apellidoM,
+        correo: this.form.correo,
+        password: this.form.contrasenia,
+        sexo: this.form.sexo,
+      };
+      api
+        .doPost('auth/register/solicitante', this.form)
+        .then((response) => (this.id = response.data))
+        .then(() => {
+          this.$swal({
+            title: 'Se guardaron exitosamente tus datos',
+            icon: 'success',
+          });
+          this.onReset();
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
+      if (this.tipoUsuario == '1') {
         this.estudiante = true;
         this.show = false;
-      } else if (this.form.tipoUsuario == '2') {
+      } else if (this.tipoUsuario == '2') {
         this.docente = true;
         this.show = false;
-      } else if (this.form.tipoUsuario == '3') {
+      } else if (this.tipoUsuario == '3') {
         this.administrativo = true;
         this.show = false;
       }
+    },
+    getDivisiones() {
+      api
+        .doGet('saps/division/getAll')
+        .then((response) => (this.listaDivisiones = response.data));
+    },
+    getNiveles() {
+      api
+        .doGet('saps/nivel/getAll')
+        .then((response) => (this.listaNiveles = response.data));
+    },
+    getCarreras() {
+      api
+        .doGet('saps/carrera/getAll')
+        .then((response) => (this.listaCarreras = response.data));
+    },
+    registroEstudiante() {
+      console.log('ID: ' + this.id);
+      this.formAlumno = {
+        matricula: this.formAlumno.matricula,
+        nivelEstudio: { idNivel: this.formAlumno.nivel },
+        carrera: { idCarrera: this.formAlumno.carrera },
+        grado: this.formAlumno.grado,
+        grupo: this.formAlumno.grupo,
+        tutor: this.formAlumno.tutor,
+      };
+      api
+        .doPost('saps/solicitud/estudiante/save/' + this.id, this.formAlumno)
+        .then(() => {
+          this.$swal({
+            title: 'Se registró exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.$router.push({ name: 'Home' });
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
     },
     regresar() {
       this.show = true;
       this.estudiante = false;
       this.docente = false;
       this.administrativo = false;
+    },
+    regresarInicio() {
+      this.$router.push({ name: 'Home' });
+    },
+    onReset() {
+      this.form.nombre = '';
+      this.form.apellidoP = '';
+      this.form.apellidoM = '';
+      this.form.correo = '';
+      this.form.sexo = '';
+      this.form.tipoUsuario = '';
+      this.form.contrasenia = '';
+      this.formAlumno.matricula;
+      this.formAlumno.nivel;
+      this.formAlumno.carrera;
+      this.formAlumno.grado;
+      this.formAlumno.grupo;
+      this.formAlumno.tutor;
     },
   },
 };

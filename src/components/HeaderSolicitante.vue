@@ -60,7 +60,7 @@
       </div>
       <hr />
       <div class="p-3 mb-2">
-        <b-button variant="outline-success"
+        <b-button @click="logout()" variant="outline-success"
           ><b-icon class="float-start" icon="lock" aria-hidden="true"></b-icon>
           Cerrar sesión</b-button
         >
@@ -68,6 +68,22 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    logout() {
+      localStorage.clear();
+      this.$router.push('/').then(() => {
+        this.$swal({
+          title: 'Tu sesión se cerró correctamente',
+          icon: 'success',
+        });
+      });
+    },
+  },
+};
+</script>
 
 <style scoped>
 .vertical-line {
