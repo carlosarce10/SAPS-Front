@@ -198,7 +198,7 @@ export default {
       form: {
         carrera: '',
       },
-      division: 0,
+      division: '',
       listaCarreras: [],
       carreraEdit: {},
       listaDivisiones: [],
@@ -328,7 +328,7 @@ export default {
           let errorResponse = error;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: 'Oops! Ha ocurrido un error en el servidor.',
+              title: 'Oops! Ha zocurrido un error en el servidor.',
               html:
                 "<span style='font-size:14pt'><b>" +
                 errorResponse.code +

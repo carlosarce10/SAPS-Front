@@ -10,11 +10,11 @@
         Iniciar Sesión
       </h5>
 
-      <form @submit="onSubmit" v-if="show">
+      <form @submit="authenticate" v-if="show">
         <div class="mb-3">
           <label class="float-start">Correo electrónico</label>
           <input
-            v-model="correo"
+            v-model="user.nickname"
             type="email"
             class="form-control"
             aria-describedby="emailHelp"
@@ -24,7 +24,7 @@
         <div class="mb-3">
           <label class="float-start">Contraseña</label>
           <input
-            v-model="contrasenia"
+            v-model="user.password"
             type="password"
             class="form-control"
             required
@@ -45,6 +45,7 @@
 <script>
 import Footer from '../components/Footer.vue';
 import HeaderInicio from '../components/HeaderInicio.vue';
+import api from '../util/api';
 export default {
   name: 'Home',
   components: {
@@ -53,16 +54,62 @@ export default {
   },
   data() {
     return {
-      contrasenia: '',
-      correo: '',
+      user: {
+        nickname: '',
+        password: '',
+      },
       show: true,
     };
   },
   methods: {
-    onSubmit(event) {
-      event.preventDefault();
-      alert(JSON.stringify(this.form));
-      this.$router.push({ name: 'InicioSolicitante' });
+    authenticate(e) {
+      e.preventDefault();
+      if (this.user !== null && this.user !== '') {
+        api
+          .doPost('auth/login', this.user)
+          .then((response) => {
+            console.log(response);
+            if (response.data.token !== null && response.data.token !== '') {
+              let auth = response.data.authorities[0].authority;
+              let nickname = response.data.username;
+              let token = response.data.token;
+
+              localStorage.setItem('authority', auth);
+              localStorage.setItem('username', nickname);
+              localStorage.setItem('token', token);
+
+              if (auth == 'ROLE_ADMIN') {
+                this.$router.push({ name: 'InicioAdmin' });
+              } else if (auth == 'ROLE_CONSULTOR') {
+                this.$router.push({ name: 'InicioDocente' });
+              } else if (auth == 'ROLE_SOLICITANTE') {
+                this.$router.push({ name: 'InicioSolicitante' });
+              }
+            }
+          })
+          .catch((error) => {
+            let errorResponse = error.response.data;
+            if (errorResponse.errorExists) {
+              this.$swal({
+                title: 'Ha ocurrido un error en el servidor!',
+                html:
+                  "<span style='font-size:14pt'><b>" +
+                  errorResponse.code +
+                  '</b> ' +
+                  errorResponse.message +
+                  '<br>Para más información contacte a su operador.</span>',
+                icon: 'error',
+              });
+            } else {
+              this.$swal({
+                title: 'Ha ocurrido un error en el servidor!',
+                html:
+                  "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+                icon: 'error',
+              });
+            }
+          });
+      }
     },
   },
 };
