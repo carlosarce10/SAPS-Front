@@ -40,7 +40,7 @@
               <tr
                 v-for="(carreras, item) in listaCarreras"
                 :key="carreras.idCarrera"
-              > 
+              >
                 <th>{{ item + 1 }}</th>
                 <td>{{ carreras.carrera }}</td>
                 <td>
@@ -63,6 +63,16 @@
               </tr>
             </tbody>
           </table>
+          <div class="container" v-if="listaCarreras.length < 1">
+            <img
+              src="../../assets/sinDatos.png"
+              style="height: 80px; width: 80px"
+              class="m-2"
+            />
+            <h3 class="mt-2">
+              Lo sentimos, no hemos podido encontrar datos :(
+            </h3>
+          </div>
         </div>
       </div>
       <!-- Modal para editar carreras -->
@@ -90,17 +100,20 @@
                   required
                 />
                 <label class="float-start">División académica</label>
-                <b-form-select 
-                  v-model="division" 
-                  size="sm" 
-                  class="form-select form-select-sm mt-3">
-                  <option v-for="div in listaDivisiones" 
+                <b-form-select
+                  v-model="division"
+                  size="sm"
+                  class="form-select form-select-sm mt-3"
+                >
+                  <option
+                    v-for="div in listaDivisiones"
                     v-bind:key="div.division"
-                    v-bind:value="div.idDivision">
-                    {{div.division}}
-                   </option>
+                    v-bind:value="div.idDivision"
+                  >
+                    {{ div.division }}
+                  </option>
                 </b-form-select>
-              </form> 
+              </form>
             </div>
             <div class="modal-footer">
               <button
@@ -143,19 +156,18 @@
                 <input
                   v-model="form.carrera"
                   type="text"
-                  class="form-control"
+                  class="form-control mb-3"
                   required
                 />
                 <label class="float-start">División académica</label>
-                <b-form-select 
-                  v-model="division" 
-                  size="sm" 
-                  class="form-select form-select-sm mt-3">
-                  <option v-for="div in listaDivisiones" 
+                <b-form-select v-model="division" class="form-select" required>
+                  <option
+                    v-for="div in listaDivisiones"
                     v-bind:key="div.division"
-                    v-bind:value="div.idDivision">
-                    {{div.division}}
-                   </option>
+                    v-bind:value="div.idDivision"
+                  >
+                    {{ div.division }}
+                  </option>
                 </b-form-select>
               </form>
             </div>
@@ -202,9 +214,7 @@ export default {
       listaCarreras: [],
       carreraEdit: {},
       listaDivisiones: [],
-      carreras : {
-
-      }
+      carreras: {},
     };
   },
   beforeMount() {
@@ -234,11 +244,13 @@ export default {
         .finally(() => (this.loading = false));
     },
     registrar() {
-      this.carreras = {carrera: this.form.carrera, division: {idDivision: this.division}}
+      this.carreras = {
+        carrera: this.form.carrera,
+        division: { idDivision: this.division },
+      };
       api
         .doPost('saps/carrera/save', this.carreras)
         .then(() => {
-          
           this.$swal({
             title: 'La carrera se registro exitosamente',
             icon: 'success',
@@ -352,7 +364,7 @@ export default {
       this.carreraEdit = {
         idCarrera: this.form.id,
         carrera: this.form.carrera,
-        division: {idDivision: this.division}
+        division: { idDivision: this.division },
       };
       api
         .doPut('saps/carrera/update', this.carreraEdit)
@@ -390,7 +402,7 @@ export default {
     getDivisiones() {
       api
         .doGet('saps/division/getAll')
-        .then((response) => (this.listaDivisiones = response.data))
+        .then((response) => (this.listaDivisiones = response.data));
     },
     onReset() {
       this.form.carrera = '';
@@ -398,7 +410,6 @@ export default {
     },
   },
 };
-
 </script>
 
 <style scoped>

@@ -5,7 +5,7 @@
     </div>
     <!-- Card de registro -->
     <div
-      class="row inicioSesion col-6 position-absolute top-50 start-50 translate-middle shadow p-3 mb-5 rounded"
+      class="row inicioSesion col-7 position-absolute top-50 start-50 translate-middle shadow p-3 mb-5 rounded"
     >
       <img
         src="../assets/logoApoyo.png"
@@ -62,6 +62,8 @@
               class="form-control"
               aria-describedby="emailHelp"
               required
+              pattern=".+@utez.edu.mx"
+              title="Debe ingresar un correo institucional '@utez.edu.mx'"
             />
           </div>
           <div class="mb-3 col-4">
@@ -92,17 +94,17 @@
             />
           </div>
           <div class="row">
-            <div class="col-6">
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary m-1 float-end">
+                Siguiente
+                <b-icon icon="arrow-right" aria-hidden="true"></b-icon>
+              </button>
               <button
                 @click="regresarInicio()"
-                class="btn btn-danger mb-3 float-start"
+                class="btn btn-danger m-1 float-end"
               >
+                Regresar
                 <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
-              </button>
-            </div>
-            <div class="col-6">
-              <button type="submit" class="btn btn-primary mb-3 float-end">
-                Siguiente
               </button>
             </div>
           </div>
@@ -180,21 +182,17 @@
             />
           </div>
           <div class="row">
-            <div class="col-6">
-              <button
-                @click="regresar()"
-                class="btn btn-danger mb-3 float-start"
-              >
-                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
-              </button>
-            </div>
-            <div class="col-6">
+            <div class="col-12">
               <button
                 type="submit"
                 @click="registroEstudiante()"
-                class="btn btn-primary mb-3 float-end"
+                class="btn btn-primary m-1 float-end"
               >
                 Registrarme
+              </button>
+              <button @click="regresar()" class="btn btn-danger m-1 float-end">
+                Regresar
+                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
               </button>
             </div>
           </div>
@@ -205,11 +203,7 @@
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">División académica</label>
-            <b-form-select
-              v-model="division"
-              size="sm"
-              class="form-select form-select-sm mt-3"
-            >
+            <b-form-select v-model="division" class="form-select">
               <option
                 v-for="div in listaDivisiones"
                 v-bind:key="div.division"
@@ -220,17 +214,13 @@
             </b-form-select>
           </div>
           <div class="row">
-            <div class="col-6">
-              <button
-                @click="regresar()"
-                class="btn btn-danger mb-3 float-start"
-              >
-                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
-              </button>
-            </div>
-            <div class="col-6">
-              <button type="submit" class="btn btn-primary mb-3 float-end">
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary m-1 float-end">
                 Registrarme
+              </button>
+              <button @click="regresar()" class="btn btn-danger m-1 float-end">
+                Regresar
+                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
               </button>
             </div>
           </div>
@@ -249,17 +239,13 @@
             />
           </div>
           <div class="row">
-            <div class="col-6">
-              <button
-                @click="regresar()"
-                class="btn btn-danger mb-3 float-start"
-              >
-                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
-              </button>
-            </div>
-            <div class="col-6">
-              <button type="submit" class="btn btn-primary mb-3 float-end">
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary m-1 float-end">
                 Registrarme
+              </button>
+              <button @click="regresar()" class="btn btn-danger m-1 float-end">
+                Regresar
+                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
               </button>
             </div>
           </div>
@@ -342,38 +328,40 @@ export default {
         password: this.form.contrasenia,
         sexo: this.form.sexo,
       };
-      api
-        .doPost('auth/register/solicitante', this.form)
-        .then((response) => (this.id = response.data))
-        .then(() => {
-          this.$swal({
-            title: 'Se guardaron exitosamente tus datos',
-            icon: 'success',
+      if (this.form !== null && this.form !== '') {
+        api
+          .doPost('auth/register/solicitante', this.form)
+          .then((response) => (this.id = response.data))
+          .then(() => {
+            this.$swal({
+              title: 'Se guardaron exitosamente tus datos',
+              icon: 'success',
+            });
+            this.onReset();
+          })
+          .catch((error) => {
+            let errorResponse = error;
+            if (errorResponse.errorExists) {
+              this.$swal({
+                title: 'Ha ocurrido un error en el servidor!',
+                html:
+                  "<span style='font-size:14pt'><b>" +
+                  errorResponse.code +
+                  '</b> ' +
+                  errorResponse.message +
+                  '<br>Para más información contacte a su operador.</span>',
+                icon: 'error',
+              });
+            } else {
+              this.$swal({
+                title: 'Ha ocurrido un error en el servidor!',
+                html:
+                  "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+                icon: 'error',
+              });
+            }
           });
-          this.onReset();
-        })
-        .catch((error) => {
-          let errorResponse = error;
-          if (errorResponse.errorExists) {
-            this.$swal({
-              title: 'Ha ocurrido un error en el servidor!',
-              html:
-                "<span style='font-size:14pt'><b>" +
-                errorResponse.code +
-                '</b> ' +
-                errorResponse.message +
-                '<br>Para más información contacte a su operador.</span>',
-              icon: 'error',
-            });
-          } else {
-            this.$swal({
-              title: 'Ha ocurrido un error en el servidor!',
-              html:
-                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
-              icon: 'error',
-            });
-          }
-        });
+      }
       if (this.tipoUsuario == '1') {
         this.estudiante = true;
         this.show = false;
