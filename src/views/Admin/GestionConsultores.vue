@@ -46,10 +46,10 @@
                 <td>
                   {{
                     consultores.usuario.nombre +
-                    " " +
-                    consultores.usuario.apellidoPaterno +
-                    " " +
-                    consultores.usuario.apellidoMaterno
+                      " " +
+                      consultores.usuario.apellidoPaterno +
+                      " " +
+                      consultores.usuario.apellidoMaterno
                   }}
                 </td>
                 <td>{{ consultores.cedula }}</td>
@@ -75,6 +75,16 @@
               </tr>
             </tbody>
           </table>
+          <div class="container" v-if="listaConsultor.length < 1">
+            <img
+              src="../../assets/sinDatos.png"
+              style="height: 80px; width: 80px"
+              class="m-2"
+            />
+            <h3 class="mt-2">
+              Lo sentimos, no hemos podido encontrar datos :(
+            </h3>
+          </div>
         </div>
       </div>
       <!-- Modal para editar consultores -->
@@ -91,31 +101,32 @@
               ></button>
             </div>
             <div class="modal-body">
-        <div class="row inicioSesion col-6 position-absolute top-50 start-50 translate-middle shadow p-3 mb-5 rounded"
-        >
-              <form>
-                <label class="float-start">Cédula</label>
-                <input
-                  v-model="formConsultor.cedula"
-                  type="text"
-                  class="form-control"
-                  required
-                />
-                <label class="float-start">Correo Personal</label>
-                <input
-                  v-model="formConsultor.correoPersonal"
-                  type="text"
-                  class="form-control"
-                  required
-                />
-                <label class="float-start">Puesto</label>
-                <input
-                  v-model="formConsultor.puesto"
-                  type="text"
-                  class="form-control"
-                  required
-                />
-              </form>
+              <div
+                class="row inicioSesion col-6 position-absolute top-50 start-50 translate-middle shadow p-3 mb-5 rounded"
+              >
+                <form>
+                  <label class="float-start">Cédula</label>
+                  <input
+                    v-model="formConsultor.cedula"
+                    type="text"
+                    class="form-control"
+                    required
+                  />
+                  <label class="float-start">Correo Personal</label>
+                  <input
+                    v-model="formConsultor.correoPersonal"
+                    type="text"
+                    class="form-control"
+                    required
+                  />
+                  <label class="float-start">Puesto</label>
+                  <input
+                    v-model="formConsultor.puesto"
+                    type="text"
+                    class="form-control"
+                    required
+                  />
+                </form>
               </div>
             </div>
             <div class="modal-footer">
@@ -314,7 +325,7 @@ export default {
       },
       listaConsultor: [],
       consultorEdit: {},
-      id: '',
+      id: "",
       sexos: [
         { value: 1, text: "Hombre" },
         { value: 2, text: "Mujer" },
@@ -388,7 +399,8 @@ export default {
               } else {
                 this.$swal({
                   title: "Oops! Ha ocurrido un error en el servidor.",
-                  html: "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
+                  html:
+                    "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
                   icon: "error",
                 });
               }
@@ -423,7 +435,8 @@ export default {
           } else {
             this.$swal({
               title: "Oops! Ha ocurrido un error en el servidor.",
-              html: "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
+              html:
+                "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
               icon: "error",
             });
           }
@@ -462,7 +475,8 @@ export default {
           } else {
             this.$swal({
               title: "Ha ocurrido un error en el servidor!",
-              html: "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
               icon: "error",
             });
           }
@@ -479,9 +493,12 @@ export default {
       };
       api
         .doPost("auth/register/consultor", this.form)
-        .then((response) => {this.id = response.data; console.log(response.data)})
+        .then((response) => {
+          this.id = response.data;
+          console.log(response.data);
+        })
         .then(() => {
-         this.onReset();
+          this.onReset();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -505,7 +522,7 @@ export default {
             });
           }
         });
-        e.preventDefault();
+      e.preventDefault();
     },
     registrar() {
       //resgistro del consultor
@@ -515,8 +532,8 @@ export default {
         correoPersonal: this.formConsultor.correoPersonal,
         puesto: this.formConsultor.puesto,
         usuario: {
-            idUsuario:this.id
-        }
+          idUsuario: this.id,
+        },
       };
       api
         .doPost("saps/consultor/save", this.formConsultor)

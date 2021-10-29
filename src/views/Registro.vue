@@ -203,7 +203,7 @@
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">División académica</label>
-            <b-form-select v-model="division" class="form-select">
+            <b-form-select v-model="formDocente.division" class="form-select">
               <option
                 v-for="div in listaDivisiones"
                 v-bind:key="div.division"
@@ -215,7 +215,7 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <button type="submit" class="btn btn-primary m-1 float-end">
+              <button type="submit" @click="registroDocente()" class="btn btn-primary m-1 float-end">
                 Registrarme
               </button>
               <button @click="regresar()" class="btn btn-danger m-1 float-end">
@@ -247,7 +247,7 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <button type="submit" class="btn btn-primary m-1 float-end">
+              <button type="submit" @click="registroAdministrativo()" class="btn btn-primary m-1 float-end">
                 Registrarme
               </button>
               <button @click="regresar()" class="btn btn-danger m-1 float-end">
@@ -302,7 +302,7 @@ export default {
       listaNiveles: [],
       listaCarreras: [],
       listaDepartamentos: [],
-      division: '',
+      //division: '',
       show: true,
       estudiante: false,
       administrativo: false,
