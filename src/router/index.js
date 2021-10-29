@@ -71,7 +71,7 @@ const routes = [
         path: "/solicitante/inicio",
         name: "InicioSolicitante",
         component:  InicioSolicitante,
-        meta: { roles: ["ROLE_SOLICITANTE"] },
+       // meta: { roles: ["ROLE_SOLICITANTE"] },
     },    
     {
         path: "/administrador/gestionConsultores",

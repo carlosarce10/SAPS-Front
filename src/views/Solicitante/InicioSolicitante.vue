@@ -51,6 +51,22 @@
           <input type="text" class="form-control" required />
         </div>
         <div class="mb-3 col-4">
+          <label class="float-start">Estado Civil</label>
+          <b-form-select
+              v-model="estadoCivil"
+              size="mb"
+              class="form-select form-select-sm mt-3"
+            >
+              <option
+                v-for="estado in listaEstadoCivil"
+                v-bind:key="estado.estadoCivil"
+                v-bind:value="estado.idEstadoCivil"
+              >
+                {{ estado.estadoCivil }}
+              </option>
+            </b-form-select>
+        </div>
+        <div class="mb-3 col-4">
           <label class="float-start">Otros datos</label>
           <input type="text" class="form-control" required />
         </div>
@@ -73,15 +89,44 @@
 <script>
 import HeaderSolicitante from '../../components/HeaderSolicitante.vue';
 import Footer from '../../components/Footer.vue';
+import api from '../../util/api';
 export default {
   components: {
     HeaderSolicitante,
     Footer,
   },
   data() {
-    return {};
+    return {
+      listaEstadoCivil:  [],
+      estadoCivil: '',
+    };
   },
-  methods: {},
+  beforeMount() {
+    this.getEstadoCivil();
+  },
+  methods: {
+    getEstadoCivil() {
+      api
+        .doGet('saps/estadoCivil/getAll')
+        .then((response) => (this.listaEstadoCivil = response.data))
+        .catch((error) => {
+          let errorResponse = error.response.data;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          }
+        })
+        .finally(() => (this.loading = false));
+    },
+
+  },
 };
 </script>
 
