@@ -101,9 +101,6 @@
               ></button>
             </div>
             <div class="modal-body">
-              <div
-                class="row inicioSesion col-6 position-absolute top-50 start-50 translate-middle shadow p-3 mb-5 rounded"
-              >
                 <form>
                   <label class="float-start">Cédula</label>
                   <input
@@ -127,7 +124,6 @@
                     required
                   />
                 </form>
-              </div>
             </div>
             <div class="modal-footer">
               <button
@@ -444,14 +440,18 @@ export default {
     },
     editar() {
       this.consultorEdit = {
-        id: this.formConsultor.idConsultor,
+        idConsultor: this.formConsultor.id,
         cedula: this.formConsultor.cedula,
         correoPersonal: this.formConsultor.correoPersonal,
         puesto: this.formConsultor.puesto,
+        usuario: {
+          idUsuario: this.id,
+        },
       };
       api
         .doPut("saps/consultor/update", this.consultorEdit)
         .then(() => {
+          console.log("DATOS: " + this.consultorEdit);
           this.$swal({
             title: "El consultor se ha editado exitosamente",
             icon: "success",
