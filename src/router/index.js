@@ -10,6 +10,7 @@ import GestionDivisiones from '../views/Admin/GestionDivisiones.vue';
 import GestionAdtvo from '../views/Admin/GestionUnidadesAdtvo.vue';
 import GestionMotivos from '../views/Admin/GestionMotivos.vue';
 import InicioSolicitante from '../views/Solicitante/InicioSolicitante.vue'
+import GestionConsultores from '../views/Admin/GestionConsultores.vue';
 
 Vue.use(VueRouter)
 
@@ -28,13 +29,13 @@ const routes = [
         path: "/administrador/inicio",
         name: "InicioAdmin",
         component: InicioAdmin,
-        meta: { roles: ["ROLE_ADMIN"] },
+        //meta: { roles: ["ROLE_ADMIN"] },
     },
     {
         path: "/administrador/gestionSitomas",
         name: "GestionSintomas",
         component: GestionSintomas,
-        meta: { roles: ["ROLE_ADMIN"] },
+       // meta: { roles: ["ROLE_ADMIN"] },
     },
     {
         path: "/administrador/gestionNiveles",
@@ -64,14 +65,20 @@ const routes = [
         path: "/administrador/gestionMotivos",
         name: "GestionMotivos",
         component: GestionMotivos,
-        meta: { roles: ["ROLE_ADMIN"] },
+        //meta: { roles: ["ROLE_ADMIN"] },
     },
     {
         path: "/solicitante/inicio",
         name: "InicioSolicitante",
         component:  InicioSolicitante,
         meta: { roles: ["ROLE_SOLICITANTE"] },
-    }
+    },    
+    {
+        path: "/administrador/gestionConsultores",
+        name: "GestionConsultores",
+        component: GestionConsultores,
+        //meta: { roles: ["ROLE_ADMIN"] },
+    },
 ]
 
 
