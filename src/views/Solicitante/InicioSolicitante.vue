@@ -119,6 +119,24 @@
             required
             :value="this.correo"
           />
+          <!-- <label class="float-start">Estado Civil</label>
+          <b-form-select
+              v-model="estadoCivil"
+              size="mb"
+              class="form-select form-select-sm mt-3"
+            >
+              <option
+                v-for="estado in listaEstadoCivil"
+                v-bind:key="estado.estadoCivil"
+                v-bind:value="estado.idEstadoCivil"
+              >
+                {{ estado.estadoCivil }}
+              </option>
+            </b-form-select> -->
+        </div>
+        <div class="mb-3 col-4">
+          <label class="float-start">Otros datos</label>
+          <input type="text" class="form-control" required />
         </div>
       </div>
     </div>
@@ -140,7 +158,6 @@
 import HeaderSolicitante from '../../components/HeaderSolicitante.vue';
 import Footer from '../../components/Footer.vue';
 import api from '../../util/api';
-
 export default {
   components: {
     HeaderSolicitante,
@@ -160,11 +177,14 @@ export default {
       tutor: '',
       nivel: '',
       matricula: '',
+      listaEstadoCivil: [],
+      estadoCivil: '',
     };
   },
   beforeMount() {
     this.correo = localStorage.getItem('username');
     this.getUser();
+    this.getEstadoCivil();
   },
   methods: {
     getUser() {
@@ -183,6 +203,26 @@ export default {
         this.matricula =
           response.data.tipoUsuario.solicitudEstudiante.matricula;
       });
+    },
+    getEstadoCivil() {
+      api
+        .doGet('saps/estadoCivil/getAll')
+        .then((response) => (this.listaEstadoCivil = response.data))
+        .catch((error) => {
+          let errorResponse = error.response.data;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          }
+        })
+        .finally(() => (this.loading = false));
     },
   },
 };

@@ -199,11 +199,11 @@
         </div>
       </form>
       <!-- Registro datos docente -->
-      <form @submit="onSubmit" v-if="docente">
+      <form v-if="docente">
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">División académica</label>
-            <b-form-select v-model="division" class="form-select">
+            <b-form-select v-model="formDocente.division" class="form-select">
               <option
                 v-for="div in listaDivisiones"
                 v-bind:key="div.division"
@@ -215,7 +215,7 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <button type="submit" class="btn btn-primary m-1 float-end">
+              <button type="submit" @click="registroDocente()" class="btn btn-primary m-1 float-end">
                 Registrarme
               </button>
               <button @click="regresar()" class="btn btn-danger m-1 float-end">
@@ -227,20 +227,27 @@
         </div>
       </form>
       <!-- Registro datos administrativo -->
-      <form @submit="onSubmit" v-if="administrativo">
+      <form v-if="administrativo">
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">Departamento</label>
-            <b-form-select
-              required
-              :options="departamentos"
-              v-model="formAdmin.departamento"
-              class="form-select"
-            />
+              <b-form-select
+                v-model="formAdmin.departamento"
+                size="sm"
+                class="form-select form-select-sm mt-3"
+              >
+                <option
+                  v-for="dep in listaDepartamentos"
+                  v-bind:key="dep.departamento"
+                  v-bind:value="dep.idDepartamento"
+                >
+                  {{ dep.departamento}}
+                </option>
+              </b-form-select>
           </div>
           <div class="row">
             <div class="col-12">
-              <button type="submit" class="btn btn-primary m-1 float-end">
+              <button type="submit" @click="registroAdministrativo()" class="btn btn-primary m-1 float-end">
                 Registrarme
               </button>
               <button @click="regresar()" class="btn btn-danger m-1 float-end">
@@ -294,7 +301,8 @@ export default {
       listaDivisiones: [],
       listaNiveles: [],
       listaCarreras: [],
-      division: '',
+      listaDepartamentos: [],
+      //division: '',
       show: true,
       estudiante: false,
       administrativo: false,
@@ -316,6 +324,7 @@ export default {
     this.getDivisiones();
     this.getNiveles();
     this.getCarreras();
+    this.getDepartamentos();
   },
   computed: {},
   methods: {
@@ -388,6 +397,11 @@ export default {
         .doGet('saps/carrera/getAll')
         .then((response) => (this.listaCarreras = response.data));
     },
+    getDepartamentos() {
+      api
+        .doGet('saps/departamento/getAll')
+        .then((response) => (this.listaDepartamentos = response.data));
+    },
     registroEstudiante() {
       console.log('ID: ' + this.id);
       this.formAlumno = {
@@ -400,6 +414,82 @@ export default {
       };
       api
         .doPost('saps/solicitud/estudiante/save/' + this.id, this.formAlumno)
+        .then(() => {
+          this.$swal({
+            title: 'Se registró exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.$router.push({ name: 'Home' });
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    registroDocente() {
+      console.log('ID: ' + this.id);
+      this.formDocente = {
+        division: { idDivision: this.formDocente.division },
+      };
+      api
+        .doPost('saps/solicitud/docente/save/' + this.id, this.formDocente)
+        .then(() => {
+          this.$swal({
+            title: 'Se registró exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.$router.push({ name: 'Home' });
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    registroAdministrativo() {
+      console.log('ID: ' + this.id);
+      this.formAdmin = {
+        departamento: { idDepartamento: this.formAdmin.departamento },
+      };
+      api
+        .doPost('saps/solicitud/administrativo/save/' + this.id, this.formAdmin)
         .then(() => {
           this.$swal({
             title: 'Se registró exitosamente',
