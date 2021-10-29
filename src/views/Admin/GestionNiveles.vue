@@ -10,7 +10,7 @@
             Gestión de niveles académicos
           </h4>
         </div>
-      </div> 
+      </div>
     </div>
     <div class="container pt-2">
       <div class="row">
@@ -63,6 +63,16 @@
               </tr>
             </tbody>
           </table>
+          <div class="container" v-if="listaNiveles.length < 1">
+            <img
+              src="../../assets/sinDatos.png"
+              style="height: 80px; width: 80px"
+              class="m-2"
+            />
+            <h3 class="mt-2">
+              Lo sentimos, no hemos podido encontrar datos :(
+            </h3>
+          </div>
         </div>
       </div>
       <!-- Modal para editar niveles -->

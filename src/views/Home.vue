@@ -19,6 +19,8 @@
             class="form-control"
             aria-describedby="emailHelp"
             required
+            pattern=".+@utez.edu.mx"
+            title="Debe ingresar un correo institucional '@utez.edu.mx'"
           />
         </div>
         <div class="mb-3">
@@ -32,6 +34,11 @@
         </div>
         <button type="submit" class="btn btn-primary mb-3 float-end ">
           Iniciar
+          <b-icon
+            class="float-end ml-2"
+            icon="cursor-fill"
+            aria-hidden="true"
+          ></b-icon>
         </button>
       </form>
       <div class="col-12">
@@ -88,8 +95,8 @@ export default {
             }
           })
           .catch((error) => {
-            let errorResponse = error.response.data;
-            if (errorResponse.errorExists) {
+            let errorResponse = error.response;
+            if (errorResponse) {
               this.$swal({
                 title: 'Ha ocurrido un error en el servidor!',
                 html:
