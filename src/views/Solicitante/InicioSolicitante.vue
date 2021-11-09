@@ -19,12 +19,13 @@
         </div>
         <div class="col-6">
           <h4 v-if="this.tipoUsuario == 1">{{ this.matricula }}</h4>
-          <h4 v-if="this.tipoUsuario == 2">I20183TI126</h4>
-          <h4 v-if="this.tipoUsuario == 3">I20183TI126</h4>
+          <h4 v-if="this.tipoUsuario == 2">{{ this.divisionDoc }}</h4>
+          <h4 v-if="this.tipoUsuario == 3">{{ this.depto }}</h4>
         </div>
       </div>
     </div>
     <div class="container pt-2">
+      <!-- Datos Alumno -->
       <div class="row  shadow rounded" v-if="this.tipoUsuario == 1">
         <div class="col-12 float-start">
           <h6 class="float-start pt-4">
@@ -38,6 +39,15 @@
             type="text"
             class="form-control"
             :value="this.division"
+            required
+          />
+        </div>
+        <div class="mb-3 col-4">
+          <label class="float-start">Carrera</label>
+          <input
+            type="text"
+            class="form-control"
+            :value="this.carrera"
             required
           />
         </div>
@@ -87,6 +97,7 @@
           />
         </div>
       </div>
+      <!-- Datos Docente -->
       <div class="row  shadow rounded" v-if="this.tipoUsuario == 2">
         <div class="col-12 float-start">
           <h6 class="float-start pt-4">
@@ -95,7 +106,7 @@
           <hr style="margin-top:5%" />
         </div>
         <div class="mb-3 col-4">
-          <label class="float-start">División académica</label>
+          <label class="float-start">Correo electrónico</label>
           <input
             type="text"
             class="form-control"
@@ -104,6 +115,7 @@
           />
         </div>
       </div>
+      <!-- Datos Administrativo -->
       <div class="row  shadow rounded" v-if="this.tipoUsuario == 3">
         <div class="col-12 float-start">
           <h6 class="float-start pt-4">
@@ -112,7 +124,7 @@
           <hr style="margin-top:5%" />
         </div>
         <div class="mb-3 col-4">
-          <label class="float-start">Departamento</label>
+          <label class="float-start">Correo electrónico</label>
           <input
             type="text"
             class="form-control"
@@ -179,6 +191,7 @@ export default {
       matricula: '',
       listaEstadoCivil: [],
       estadoCivil: '',
+      divisionDoc: '',
     };
   },
   beforeMount() {
@@ -200,8 +213,13 @@ export default {
         this.tutor = response.data.tipoUsuario.solicitudEstudiante.tutor;
         this.nivel =
           response.data.tipoUsuario.solicitudEstudiante.nivelEstudio.nivel;
+        this.carrera =
+          response.data.tipoUsuario.solicitudEstudiante.carrera.carrera;
         this.matricula =
           response.data.tipoUsuario.solicitudEstudiante.matricula;
+        this.divisionDoc =
+          response.data.tipoUsuario.solicitudDocente.division.division;
+        this.depto = response.data.tipoUsuario.solicitudEstudiante.matricula;
       });
     },
     getEstadoCivil() {

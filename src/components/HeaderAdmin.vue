@@ -100,6 +100,16 @@
             ></b-icon>
             Gestión de niveles</b-button
           >
+          <b-button
+            href="/administrador/GestionConsultores"
+            variant="outline-success"
+            ><b-icon
+              class="float-start"
+              icon="card-checklist"
+              aria-hidden="true"
+            ></b-icon>
+            Gestión de Consultores</b-button
+          >
           <b-button variant="outline-success"
             ><b-icon
               class="float-start"
