@@ -46,9 +46,9 @@
                 <td>
                   {{
                     consultores.usuario.nombre +
-                      " " +
+                      ' ' +
                       consultores.usuario.apellidoPaterno +
-                      " " +
+                      ' ' +
                       consultores.usuario.apellidoMaterno
                   }}
                 </td>
@@ -281,7 +281,11 @@
               >
                 Cerrar
               </button>
-              <button @click="register()" type="button" class="btn btn-success">
+              <button
+                @click="registrar()"
+                type="button"
+                class="btn btn-success"
+              >
                 Guardar
               </button>
             </div>
@@ -294,9 +298,9 @@
 </template>
 
 <script>
-import HeaderAdmin from "../../components/HeaderAdmin.vue";
-import Footer from "../../components/Footer.vue";
-import api from "../../util/api";
+import HeaderAdmin from '../../components/HeaderAdmin.vue';
+import Footer from '../../components/Footer.vue';
+import api from '../../util/api';
 
 export default {
   components: {
@@ -306,26 +310,26 @@ export default {
   data() {
     return {
       formConsultor: {
-        idConsultor: "",
-        cedula: "",
-        correoPersonal: "",
-        puesto: "",
+        id: '',
+        cedula: '',
+        correoPersonal: '',
+        puesto: '',
       },
       form: {
-        nombre: "",
-        apellidoP: "",
-        apellidoM: "",
-        correo: "",
-        contrasenia: "",
-        sexo: "",
+        nombre: '',
+        apellidoP: '',
+        apellidoM: '',
+        correo: '',
+        contrasenia: '',
+        sexo: '',
       },
       listaConsultor: [],
       consultorEdit: {},
-      id: "",
+      id: '',
       sexos: [
-        { value: 1, text: "Hombre" },
-        { value: 2, text: "Mujer" },
-        { value: 3, text: "No binario" },
+        { value: 1, text: 'Hombre' },
+        { value: 2, text: 'Mujer' },
+        { value: 3, text: 'No binario' },
       ],
     };
   },
@@ -336,7 +340,7 @@ export default {
   methods: {
     getConsultores() {
       api
-        .doGet("saps/consultor/getAll")
+        .doGet('saps/consultor/getAll')
         .then((response) => {
           this.listaConsultor = response.data;
           console.log(response.data);
@@ -346,13 +350,13 @@ export default {
           let errorResponse = error.response.data;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: "Oops! Ha ocurrido un error en el servidor.",
-              icon: "error",
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
             });
           } else {
             this.$swal({
-              title: "Oops! Ha ocurrido un error en el servidor.",
-              icon: "error",
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
             });
           }
         })
@@ -360,22 +364,22 @@ export default {
     },
     eliminar(id) {
       this.$swal({
-        title: "¿Estás seguro de eliminar este consultor?",
-        icon: "question",
+        title: '¿Estás seguro de eliminar este consultor?',
+        icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: "#00ab84",
-        cancelButtonColor: "#cf2115",
-        cancelButtonText: "Cancelar",
-        confirmButtonText: "Confirmar",
+        confirmButtonColor: '#00ab84',
+        cancelButtonColor: '#cf2115',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar',
         reverseButtons: true,
       }).then((result) => {
         if (result.isConfirmed) {
           api
-            .doDelete("saps/consultor/delete/" + id)
+            .doDelete('saps/consultor/delete/' + id)
             .then(() => {
               this.$swal({
-                title: "¡Consultor eliminado exitosamente!",
-                icon: "success",
+                title: '¡Consultor eliminado exitosamente!',
+                icon: 'success',
               });
               this.getConsultores();
             })
@@ -383,21 +387,21 @@ export default {
               let errorResponse = error;
               if (errorResponse.errorExists) {
                 this.$swal({
-                  title: "Oops! Ha ocurrido un error en el servidor.",
+                  title: 'Oops! Ha ocurrido un error en el servidor.',
                   html:
                     "<span style='font-size:14pt'><b>" +
                     errorResponse.code +
-                    "</b> " +
+                    '</b> ' +
                     errorResponse.message +
-                    "<br>Contacte a su operador para más detalles.</span>",
-                  icon: "error",
+                    '<br>Contacte a su operador para más detalles.</span>',
+                  icon: 'error',
                 });
               } else {
                 this.$swal({
-                  title: "Oops! Ha ocurrido un error en el servidor.",
+                  title: 'Oops! Ha ocurrido un error en el servidor.',
                   html:
                     "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
-                  icon: "error",
+                  icon: 'error',
                 });
               }
             })
@@ -407,10 +411,15 @@ export default {
     },
     datosConsultor(id) {
       api
-        .doGet("saps/consultor/getOne/" + id)
+        .doGet('saps/consultor/getOne/' + id)
         .then((response) => {
+<<<<<<< HEAD
           console.log("response: " + response.data);
           this.formConsultor.idConsultor = response.data.idConsultor;
+=======
+          console.log('response: ' + response.data);
+          this.formConsultor.id = response.data.idConsultor;
+>>>>>>> bc6ba187721dfa0a5525cc0a9f104389c596ce2b
           this.formConsultor.cedula = response.data.cedula;
           this.formConsultor.correoPersonal = response.data.correoPersonal;
           this.formConsultor.puesto = response.data.puesto;
@@ -419,21 +428,21 @@ export default {
           let errorResponse = error;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: "Oops! Ha ocurrido un error en el servidor.",
+              title: 'Oops! Ha ocurrido un error en el servidor.',
               html:
                 "<span style='font-size:14pt'><b>" +
                 errorResponse.code +
-                "</b> " +
+                '</b> ' +
                 errorResponse.message +
-                "<br>Contacte a su operador para más detalles.</span>",
-              icon: "error",
+                '<br>Contacte a su operador para más detalles.</span>',
+              icon: 'error',
             });
           } else {
             this.$swal({
-              title: "Oops! Ha ocurrido un error en el servidor.",
+              title: 'Oops! Ha ocurrido un error en el servidor.',
               html:
                 "<span style='font-size:14pt'>Contacte a su operador para más detalles.</span>",
-              icon: "error",
+              icon: 'error',
             });
           }
         });
@@ -450,12 +459,12 @@ export default {
       };
       console.log("+++++++++++: " + this.id);
       api
-        .doPut("saps/consultor/update", this.consultorEdit)
+        .doPut('saps/consultor/update', this.consultorEdit)
         .then(() => {
           console.log("+++++++++++: " + this.consultorEdit);
           this.$swal({
-            title: "El consultor se ha editado exitosamente",
-            icon: "success",
+            title: 'El consultor se ha editado exitosamente',
+            icon: 'success',
           });
           this.onResetC();
           this.getConsultores();
@@ -464,21 +473,21 @@ export default {
           let errorResponse = error;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: "Ha ocurrido un error en el servidor!",
+              title: 'Ha ocurrido un error en el servidor!',
               html:
                 "<span style='font-size:14pt'><b>" +
                 errorResponse.code +
-                "</b> " +
+                '</b> ' +
                 errorResponse.message +
-                "<br>Para más información contacte a su operador.</span>",
-              icon: "error",
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
             });
           } else {
             this.$swal({
-              title: "Ha ocurrido un error en el servidor!",
+              title: 'Ha ocurrido un error en el servidor!',
               html:
                 "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
-              icon: "error",
+              icon: 'error',
             });
           }
         });
@@ -493,7 +502,7 @@ export default {
         sexo: this.form.sexo,
       };
       api
-        .doPost("auth/register/consultor", this.form)
+        .doPost('auth/register/consultor', this.form)
         .then((response) => {
           this.id = response.data;
           console.log(response.data);
@@ -505,21 +514,21 @@ export default {
           let errorResponse = error;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: "Ha ocurrido un error en el servidor!",
+              title: 'Ha ocurrido un error en el servidor!',
               html:
                 "<span style='font-size:14pt'><b>" +
                 errorResponse.code +
-                "</b> " +
+                '</b> ' +
                 errorResponse.message +
-                "<br>Para más información contacte a su operador.</span>",
-              icon: "error",
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
             });
           } else {
             this.$swal({
-              title: "Ha ocurrido un error en el servidor!",
+              title: 'Ha ocurrido un error en el servidor!',
               html:
                 "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
-              icon: "error",
+              icon: 'error',
             });
           }
         });
@@ -527,7 +536,7 @@ export default {
     },
     registrar() {
       //resgistro del consultor
-      console.log("ID --> " + this.id);
+      console.log('ID --> ' + this.id);
       this.formConsultor = {
         cedula: this.formConsultor.cedula,
         correoPersonal: this.formConsultor.correoPersonal,
@@ -537,11 +546,11 @@ export default {
         },
       };
       api
-        .doPost("saps/consultor/save", this.formConsultor)
+        .doPost('saps/consultor/save', this.formConsultor)
         .then(() => {
           this.$swal({
-            title: "El consultor se registro exitosamente",
-            icon: "success",
+            title: 'El consultor se registro exitosamente',
+            icon: 'success',
           });
           this.onResetC();
         })
@@ -549,37 +558,37 @@ export default {
           let errorResponse = error;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: "Ha ocurrido un error en el servidor!",
+              title: 'Ha ocurrido un error en el servidor!',
               html:
                 "<span style='font-size:14pt'><b>" +
                 errorResponse.code +
-                "</b> " +
+                '</b> ' +
                 errorResponse.message +
-                "<br>Para más información contacte a su operador.</span>",
-              icon: "error",
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
             });
           } else {
             this.$swal({
-              title: "Ha ocurrido un error en el servidor!",
+              title: 'Ha ocurrido un error en el servidor!',
               html:
                 "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
-              icon: "error",
+              icon: 'error',
             });
           }
         });
     },
     onReset() {
-      this.form.nombre = "";
-      this.form.apellidoP = "";
-      this.form.apellidoM = "";
-      this.form.correo = "";
-      this.form.contrasenia = "";
-      this.form.sexo = "";
+      this.form.nombre = '';
+      this.form.apellidoP = '';
+      this.form.apellidoM = '';
+      this.form.correo = '';
+      this.form.contrasenia = '';
+      this.form.sexo = '';
     },
     onResetC() {
-      this.formConsultor.cedula = "";
-      this.formConsultor.correoPersonal = "";
-      this.formConsultor.puesto = "";
+      this.formConsultor.cedula = '';
+      this.formConsultor.correoPersonal = '';
+      this.formConsultor.puesto = '';
     },
   },
 };

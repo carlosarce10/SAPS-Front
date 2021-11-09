@@ -75,7 +75,6 @@ export default {
         api
           .doPost('auth/login', this.user)
           .then((response) => {
-            console.log(response);
             if (response.data.token !== null && response.data.token !== '') {
               let auth = response.data.authorities[0].authority;
               let nickname = response.data.username;

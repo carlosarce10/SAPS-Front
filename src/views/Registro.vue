@@ -25,7 +25,7 @@
         Registro de Administrativo
       </h5>
       <!-- Registro datos genericos -->
-      <form @submit="onSubmit" v-if="show">
+      <form v-if="show">
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">Nombre(s)</label>
@@ -95,7 +95,11 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <button type="submit" class="btn btn-primary m-1 float-end">
+              <button
+                @click="onSubmit()"
+                type="submit"
+                class="btn btn-primary m-1 float-end"
+              >
                 Siguiente
                 <b-icon icon="arrow-right" aria-hidden="true"></b-icon>
               </button>
@@ -215,7 +219,11 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <button type="submit" @click="registroDocente()" class="btn btn-primary m-1 float-end">
+              <button
+                type="submit"
+                @click="registroDocente()"
+                class="btn btn-primary m-1 float-end"
+              >
                 Registrarme
               </button>
               <button @click="regresar()" class="btn btn-danger m-1 float-end">
@@ -231,23 +239,27 @@
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">Departamento</label>
-              <b-form-select
-                v-model="formAdmin.departamento"
-                size="sm"
-                class="form-select form-select-sm mt-3"
+            <b-form-select
+              v-model="formAdmin.departamento"
+              size="sm"
+              class="form-select form-select-sm mt-3"
+            >
+              <option
+                v-for="dep in listaDepartamentos"
+                v-bind:key="dep.departamento"
+                v-bind:value="dep.idDepartamento"
               >
-                <option
-                  v-for="dep in listaDepartamentos"
-                  v-bind:key="dep.departamento"
-                  v-bind:value="dep.idDepartamento"
-                >
-                  {{ dep.departamento}}
-                </option>
-              </b-form-select>
+                {{ dep.departamento }}
+              </option>
+            </b-form-select>
           </div>
           <div class="row">
             <div class="col-12">
-              <button type="submit" @click="registroAdministrativo()" class="btn btn-primary m-1 float-end">
+              <button
+                type="submit"
+                @click="registroAdministrativo()"
+                class="btn btn-primary m-1 float-end"
+              >
                 Registrarme
               </button>
               <button @click="regresar()" class="btn btn-danger m-1 float-end">
@@ -403,7 +415,6 @@ export default {
         .then((response) => (this.listaDepartamentos = response.data));
     },
     registroEstudiante() {
-      console.log('ID: ' + this.id);
       this.formAlumno = {
         matricula: this.formAlumno.matricula,
         nivelEstudio: { idNivel: this.formAlumno.nivel },
@@ -446,7 +457,6 @@ export default {
         });
     },
     registroDocente() {
-      console.log('ID: ' + this.id);
       this.formDocente = {
         division: { idDivision: this.formDocente.division },
       };
@@ -484,7 +494,6 @@ export default {
         });
     },
     registroAdministrativo() {
-      console.log('ID: ' + this.id);
       this.formAdmin = {
         departamento: { idDepartamento: this.formAdmin.departamento },
       };
