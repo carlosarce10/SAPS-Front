@@ -306,7 +306,7 @@ export default {
   data() {
     return {
       formConsultor: {
-        id: "",
+        idConsultor: "",
         cedula: "",
         correoPersonal: "",
         puesto: "",
@@ -410,7 +410,7 @@ export default {
         .doGet("saps/consultor/getOne/" + id)
         .then((response) => {
           console.log("response: " + response.data);
-          this.formConsultor.id = response.data.idConsultor;
+          this.formConsultor.idConsultor = response.data.idConsultor;
           this.formConsultor.cedula = response.data.cedula;
           this.formConsultor.correoPersonal = response.data.correoPersonal;
           this.formConsultor.puesto = response.data.puesto;
@@ -440,7 +440,7 @@ export default {
     },
     editar() {
       this.consultorEdit = {
-        idConsultor: this.formConsultor.id,
+        idConsultor: this.formConsultor.idConsultor,
         cedula: this.formConsultor.cedula,
         correoPersonal: this.formConsultor.correoPersonal,
         puesto: this.formConsultor.puesto,
@@ -448,10 +448,11 @@ export default {
           idUsuario: this.id,
         },
       };
+      console.log("+++++++++++: " + this.id);
       api
         .doPut("saps/consultor/update", this.consultorEdit)
         .then(() => {
-          console.log("DATOS: " + this.consultorEdit);
+          console.log("+++++++++++: " + this.consultorEdit);
           this.$swal({
             title: "El consultor se ha editado exitosamente",
             icon: "success",
