@@ -21,7 +21,7 @@
             variant="outline-success"
             data-bs-toggle="modal"
             data-bs-target="#agregarModal"
-            ><b-icon icon="plus" aria-hidden="true"></b-icon>
+            > Registrar motivo<b-icon icon="plus" aria-hidden="true"></b-icon>
           </b-button>
         </div>
       </div>
@@ -143,6 +143,7 @@
                   v-model="form.motivo"
                   type="text"
                   class="form-control"
+                  placeholder="Baja autoestima"
                   required
                 />
               </form>

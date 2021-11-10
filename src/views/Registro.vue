@@ -33,6 +33,7 @@
               v-model="form.nombre"
               type="text"
               class="form-control"
+              placeholder="Juan"
               required
             />
           </div>
@@ -42,6 +43,7 @@
               v-model="form.apellidoP"
               type="text"
               class="form-control"
+              placeholder="Pérez"
               required
             />
           </div>
@@ -51,6 +53,7 @@
               v-model="form.apellidoM"
               type="text"
               class="form-control"
+              placeholder="López"
               required
             />
           </div>
@@ -61,6 +64,7 @@
               type="email"
               class="form-control"
               aria-describedby="emailHelp"
+              placeholder="correo@utez.edu.mx"
               required
               pattern=".+@utez.edu.mx"
               title="Debe ingresar un correo institucional '@utez.edu.mx'"
@@ -73,7 +77,9 @@
               :options="sexos"
               v-model="form.sexo"
               class="form-select"
-            />
+            >
+            <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+            </b-form-select>
           </div>
           <div class="mb-3 col-4">
             <label class="float-start">Tipo de usuario</label>
@@ -82,7 +88,9 @@
               :options="tiposUsario"
               v-model="tipoUsuario"
               class="form-select"
-            />
+            >
+            <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+            </b-form-select>
           </div>
           <div class="mb-3 col-4">
             <label class="float-start">Contraseña</label>
@@ -90,6 +98,7 @@
               v-model="form.contrasenia"
               type="password"
               class="form-control"
+              placeholder="****"
               required
             />
           </div>
@@ -123,6 +132,7 @@
               v-model="formAlumno.matricula"
               type="text"
               class="form-control"
+              placeholder="2021XX123"
               required
             />
           </div>
@@ -133,6 +143,7 @@
               v-model="formAlumno.nivel"
               class="form-select"
             >
+            <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
               <option
                 v-for="niveles in listaNiveles"
                 v-bind:key="niveles.nivel"
@@ -149,6 +160,7 @@
               v-model="formAlumno.carrera"
               class="form-select"
             >
+            <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
               <option
                 v-for="carreras in listaCarreras"
                 v-bind:key="carreras.carrera"
@@ -164,6 +176,7 @@
               v-model="formAlumno.grado"
               type="text"
               class="form-control"
+              placeholder="1"
               required
             />
           </div>
@@ -173,6 +186,7 @@
               v-model="formAlumno.grupo"
               type="text"
               class="form-control"
+              placeholder="A"
               required
             />
           </div>
@@ -182,6 +196,7 @@
               v-model="formAlumno.tutor"
               type="text"
               class="form-control"
+              placeholder="Juan Pérez"
               required
             />
           </div>
@@ -208,6 +223,7 @@
           <div class="mb-3 col-4">
             <label class="float-start">División académica</label>
             <b-form-select v-model="formDocente.division" class="form-select">
+             <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
               <option
                 v-for="div in listaDivisiones"
                 v-bind:key="div.division"
@@ -244,6 +260,7 @@
               size="sm"
               class="form-select form-select-sm mt-3"
             >
+              <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
               <option
                 v-for="dep in listaDepartamentos"
                 v-bind:key="dep.departamento"

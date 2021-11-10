@@ -21,7 +21,7 @@
             variant="outline-success"
             data-bs-toggle="modal"
             data-bs-target="#agregarModal"
-            ><b-icon icon="plus" aria-hidden="true"></b-icon>
+            > Registrar división académica<b-icon icon="plus" aria-hidden="true"></b-icon>
           </b-button>
         </div>
       </div>
@@ -127,7 +127,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Agregar Division
+                Agregar División
               </h5>
               <button
                 type="button"
@@ -138,11 +138,12 @@
             </div>
             <div class="modal-body">
               <form>
-                <label class="float-start">Division</label>
+                <label class="float-start">División</label>
                 <input
                   v-model="form.division"
                   type="text"
                   class="form-control"
+                  placeholder="DAMM"
                   required
                 />
               </form>

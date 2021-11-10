@@ -19,7 +19,7 @@
             variant="outline-success"
             data-bs-toggle="modal"
             data-bs-target="#agregarModal"
-            ><b-icon icon="plus" aria-hidden="true"></b-icon>
+            > Registrar consultor <b-icon icon="plus" aria-hidden="true"></b-icon>
           </b-button>
         </div>
       </div>
@@ -147,7 +147,7 @@
         tabindex="-1"
         aria-hidden="true"
       >
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Registro de consultores</h5>
@@ -158,7 +158,12 @@
                 aria-label="Close"
               ></button>
             </div>
-            <div class="modal-body">
+            <!--<div class="row">
+              <div class="col-12">
+                <label>Para hacer el registro del consultor primero deberas de registrar sus datos generales</label>
+              </div>
+            </div>-->
+            <div class="modal-body"> 
               <!-- Registro datos genericos -->
               <form @submit="onSubmit">
                 <div class="row">
@@ -168,6 +173,7 @@
                       v-model="form.nombre"
                       type="text"
                       class="form-control"
+                      placeholder="Juan"
                       required
                     />
                   </div>
@@ -177,6 +183,7 @@
                       v-model="form.apellidoP"
                       type="text"
                       class="form-control"
+                      placeholder="López"
                       required
                     />
                   </div>
@@ -186,6 +193,7 @@
                       v-model="form.apellidoM"
                       type="text"
                       class="form-control"
+                      placeholder="López"
                       required
                     />
                   </div>
@@ -196,6 +204,7 @@
                       type="email"
                       class="form-control"
                       aria-describedby="emailHelp"
+                      placeholder="correo@utez.edu.mx"
                       required
                     />
                   </div>
@@ -206,7 +215,9 @@
                       :options="sexos"
                       v-model="form.sexo"
                       class="form-select"
-                    />
+                    > 
+                    <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+                    </b-form-select>
                   </div>
                   <div class="mb-3 col-4">
                     <label class="float-start">Contraseña</label>
@@ -214,16 +225,18 @@
                       v-model="form.contrasenia"
                       type="password"
                       class="form-control"
+                      placeholder="****"
                       required
                     />
                   </div>
                   <div class="row">
-                    <div class="col-6">
+                    <div class="col-12">
                       <button
                         type="submit"
-                        class="btn btn-primary mb-3 float-end"
+                        class="btn btn-primary m-1 float-end"
                       >
                         Siguiente
+                        <b-icon icon="arrow-right" aria-hidden="true"></b-icon>
                       </button>
                     </div>
                   </div>
@@ -238,6 +251,7 @@
                       v-model="formConsultor.cedula"
                       type="text"
                       class="form-control"
+                      placeholder="ABC1234"
                       required
                     />
                   </div>
@@ -247,6 +261,7 @@
                       v-model="formConsultor.correoPersonal"
                       type="text"
                       class="form-control"
+                      placeholder="correo@gmail.com"
                       required
                     />
                   </div>
@@ -256,14 +271,15 @@
                       v-model="formConsultor.puesto"
                       type="text"
                       class="form-control"
+                      placeholder="Docente"
                       required
                     />
                   </div>
                   <div class="row">
-                    <div class="col-6">
+                    <div class="col-12">
                       <button
                         type="submit"
-                        class="btn btn-primary mb-3 float-end"
+                        class="btn btn-primary m-1 float-end"
                         @click="registrar()"
                       >
                         Registrar
@@ -280,13 +296,6 @@
                 data-bs-dismiss="modal"
               >
                 Cerrar
-              </button>
-              <button
-                @click="registrar()"
-                type="button"
-                class="btn btn-success"
-              >
-                Guardar
               </button>
             </div>
           </div>
@@ -310,7 +319,7 @@ export default {
   data() {
     return {
       formConsultor: {
-        id: '',
+        idConsultor: '',
         cedula: '',
         correoPersonal: '',
         puesto: '',
@@ -323,6 +332,7 @@ export default {
         contrasenia: '',
         sexo: '',
       },
+      usuarioId: '',
       listaConsultor: [],
       consultorEdit: {},
       id: '',
@@ -413,16 +423,12 @@ export default {
       api
         .doGet('saps/consultor/getOne/' + id)
         .then((response) => {
-<<<<<<< HEAD
-          console.log("response: " + response.data);
-          this.formConsultor.idConsultor = response.data.idConsultor;
-=======
           console.log('response: ' + response.data);
-          this.formConsultor.id = response.data.idConsultor;
->>>>>>> bc6ba187721dfa0a5525cc0a9f104389c596ce2b
+          this.formConsultor.idConsultor = response.data.idConsultor;
           this.formConsultor.cedula = response.data.cedula;
           this.formConsultor.correoPersonal = response.data.correoPersonal;
           this.formConsultor.puesto = response.data.puesto;
+          this.id = response.data.usuario.idUsuario;
         })
         .catch((error) => {
           let errorResponse = error;
@@ -448,6 +454,7 @@ export default {
         });
     },
     editar() {
+      console.log("komo: " + this.id);
       this.consultorEdit = {
         idConsultor: this.formConsultor.idConsultor,
         cedula: this.formConsultor.cedula,
@@ -457,16 +464,15 @@ export default {
           idUsuario: this.id,
         },
       };
-      console.log("+++++++++++: " + this.id);
+      console.log("khe: " + this.id);
       api
         .doPut('saps/consultor/update', this.consultorEdit)
         .then(() => {
-          console.log("+++++++++++: " + this.consultorEdit);
           this.$swal({
             title: 'El consultor se ha editado exitosamente',
             icon: 'success',
           });
-          this.onResetC();
+          this.onReset();
           this.getConsultores();
         })
         .catch((error) => {
@@ -505,11 +511,15 @@ export default {
         .doPost('auth/register/consultor', this.form)
         .then((response) => {
           this.id = response.data;
-          console.log(response.data);
+          //console.log(response.data);
         })
         .then(() => {
-          this.onReset();
-        })
+            this.$swal({
+              title: 'Se guardaron exitosamente tus datos',
+              icon: 'success',
+            });
+            this.onReset();
+          })
         .catch((error) => {
           let errorResponse = error;
           if (errorResponse.errorExists) {
@@ -536,7 +546,6 @@ export default {
     },
     registrar() {
       //resgistro del consultor
-      console.log('ID --> ' + this.id);
       this.formConsultor = {
         cedula: this.formConsultor.cedula,
         correoPersonal: this.formConsultor.correoPersonal,
@@ -547,12 +556,15 @@ export default {
       };
       api
         .doPost('saps/consultor/save', this.formConsultor)
+        .then((response) => {
+          this.id = response.data;
+        })
         .then(() => {
           this.$swal({
             title: 'El consultor se registro exitosamente',
             icon: 'success',
           });
-          this.onResetC();
+          this.onReset();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -584,8 +596,6 @@ export default {
       this.form.correo = '';
       this.form.contrasenia = '';
       this.form.sexo = '';
-    },
-    onResetC() {
       this.formConsultor.cedula = '';
       this.formConsultor.correoPersonal = '';
       this.formConsultor.puesto = '';

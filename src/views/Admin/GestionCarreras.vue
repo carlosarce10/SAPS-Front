@@ -21,7 +21,7 @@
             variant="outline-success"
             data-bs-toggle="modal"
             data-bs-target="#agregarModal"
-            ><b-icon icon="plus" aria-hidden="true"></b-icon>
+            > Registrar carreras<b-icon icon="plus" aria-hidden="true"></b-icon>
           </b-button>
         </div>
       </div>
@@ -157,10 +157,12 @@
                   v-model="form.carrera"
                   type="text"
                   class="form-control mb-3"
+                  placeholder="Tecnologías"
                   required
                 />
                 <label class="float-start">División académica</label>
                 <b-form-select v-model="division" class="form-select" required>
+                  <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
                   <option
                     v-for="div in listaDivisiones"
                     v-bind:key="div.division"
