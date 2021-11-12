@@ -202,6 +202,7 @@
           </div>
         </div>
       </form>
+
       <!-- Registro datos docente -->
       <form v-if="docente">
         <div class="row">
@@ -234,6 +235,7 @@
           </div>
         </div>
       </form>
+
       <!-- Registro datos administrativo -->
       <form v-if="administrativo">
         <div class="row">
