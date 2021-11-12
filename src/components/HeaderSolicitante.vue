@@ -50,7 +50,9 @@
             ></b-icon>
             Consulta de sesiones</b-button
           >
-          <b-button variant="outline-success"
+          <b-button 
+          href="/solicitante/registroSolicitud"
+          variant="outline-success"
             ><b-icon
               class="float-start"
               icon="calendar-check"

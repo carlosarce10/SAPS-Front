@@ -12,6 +12,7 @@ import GestionMotivos from '../views/Admin/GestionMotivos.vue';
 import InicioSolicitante from '../views/Solicitante/InicioSolicitante.vue'
 import GestionConsultores from '../views/Admin/GestionConsultores.vue';
 import ConsultasSolicitante from '../views/Solicitante/ConsultasSolicitante.vue';
+import RegistroSolicitud from '../views/Solicitante/RegistroSolicitud.vue';
 
 Vue.use(VueRouter)
 
@@ -84,6 +85,12 @@ const routes = [
         path: "/administrador/gestionConsultores",
         name: "GestionConsultores",
         component: GestionConsultores,
+        //meta: { roles: ["ROLE_ADMIN"] },
+    },
+    {
+        path: "/solicitante/registroSolicitud",
+        name: "RegistroSolicitud",
+        component: RegistroSolicitud,
         //meta: { roles: ["ROLE_ADMIN"] },
     },
 ]
