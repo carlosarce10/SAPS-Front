@@ -40,7 +40,9 @@
             ></b-icon>
             Perfil
           </b-button>
-          <b-button variant="outline-success"
+          <b-button 
+            href="/solicitante/consultasSolicitante"
+            variant="outline-success"
             ><b-icon
               class="float-start"
               icon="calendar3"
