@@ -222,10 +222,6 @@ export default {
         .doPost('saps/solicitud/save', this.form)
         .then(() => {
           this.$swal({
-            title: 'La solicitud se ha registrado correctamente',
-            icon: 'success',
-          });
-          this.$swal({
             title: 'Solicitud registrada',
             text: "La solicitud ha sido generada y enviada correctamente",
             icon: 'success',
@@ -277,11 +273,6 @@ export default {
           )
         )
         .then((e) => console.log(e));
-    },
-    onReset() {
-      this.form = {}
-      this.getSintomas();
-      this.getMotivos();
     }
   },
 };
