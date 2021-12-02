@@ -19,7 +19,7 @@
       class="
         row
         inicioSesion
-        col-7
+        col-5
         position-absolute
         top-50
         start-50
