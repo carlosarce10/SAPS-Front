@@ -65,14 +65,14 @@
       <div class="mb-3 col-12">
         <label class="float-start">Consultores</label>
         <b-form-select required v-model="consultor" class="form-select">
+          <option v-bind:value="consultor" selected="selected">Elige una opción</option>
           <option
-            v-for="consultor in consultores"
-            v-bind:key="consultor.consultor"
-            v-bind:value="consultor.idConsultor"
+            v-for="c in consultores"
+            v-bind:key="c.consultor"
+            v-bind:value="c.idConsultor"
           >
-            {{ consultor.usuario.nombre + ' ' + consultor.usuario.apellidoPaterno + ' ' + consultor.usuario.apellidoMaterno }}
+            {{ c.usuario.nombre + ' ' + c.usuario.apellidoPaterno + ' ' + c.usuario.apellidoMaterno }}
           </option>
-          <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
         </b-form-select>
       </div>
       <div class="mb-3 col-12">
@@ -101,7 +101,7 @@
 import HeaderSolicitante from "../../components/HeaderSolicitante.vue";
 import api from "../../util/api";
 
-var fecha = new Date();
+var fecha = new Date(2021,12,17,13,30,0);
 var fechaActual = fecha.getFullYear()+'-'+(fecha.getMonth()+1)+'-'+(fecha.getDate()+1);
 
 console.log(fechaActual);
@@ -121,7 +121,7 @@ export default {
       time: '',
       motivos: [],
       sintomas: [],
-      consultor: '',
+      consultor: null,
       correo: localStorage.getItem("username"),
       idSolicitante:'',
       idUsuario: '',
@@ -142,13 +142,19 @@ export default {
           let errorResponse = error.response.data;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: 'Oops! Ha ocurrido un error en el servidor.',
+              title: 'Lo sentimos',
+              text: "Hubo un error al recuperar los motivos",
               icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
             });
           } else {
             this.$swal({
-              title: 'Oops! Ha ocurrido un error en el servidor.',
+              title: 'Lo sentimos',
+              text: "Hubo un error al recuperar los motivos",
               icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
             });
           }
         })
@@ -162,13 +168,19 @@ export default {
           let errorResponse = error.response.data;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: 'Oops! Ha ocurrido un error en el servidor.',
+              title: 'Lo sentimos',
+              text: "Hubo un error al recuperar los sintomas",
               icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
             });
           } else {
             this.$swal({
-              title: 'Oops! Ha ocurrido un error en el servidor.',
+              title: 'Lo sentimos',
+              text: "Hubo un error al recuperar los sintomas",
               icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
             });
           }
         })
@@ -177,18 +189,27 @@ export default {
     getConsultores() {
       api
         .doGet('saps/consultor/getAll')
-        .then((response) => (this.consultores = response.data))
+        .then((response) => {
+          this.consultores = response.data
+          this.consultor = this.consultores[0].idConsultor
+        })
         .catch((error) => {
           let errorResponse = error.response.data;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: 'Oops! Ha ocurrido un error en el servidor.',
+              title: 'Lo sentimos',
+              text: "Hubo un error al recuperar los consultores",
               icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
             });
           } else {
             this.$swal({
-              title: 'Oops! Ha ocurrido un error en el servidor.',
+              title: 'Lo sentimos',
+              text: "Hubo un error al recuperar los consultores",
               icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
             });
           }
         })
@@ -207,7 +228,7 @@ export default {
       });
 
       this.form = {
-        fecha: fechaActual,
+        fecha: fecha,
         estado: 'Pendiente',
         solicitante: {
             idSolicitante: this.idSolicitante,
@@ -238,21 +259,19 @@ export default {
           let errorResponse = error;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: 'Ha ocurrido un error en el servidor!',
-              html:
-                "<span style='font-size:14pt'><b>" +
-                errorResponse.code +
-                '</b> ' +
-                errorResponse.message +
-                '<br>Para más información contacte a su operador.</span>',
+              title: 'Lo sentimos',
+              text: "Hubo un error al registrar la solicitud",
               icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
             });
           } else {
             this.$swal({
-              title: 'Ha ocurrido un error en el servidor!',
-              html:
-                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              title: 'Lo sentimos',
+              text: "Hubo un error al registrar la solicitud",
               icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
             });
           }
         });
