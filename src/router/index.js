@@ -11,6 +11,7 @@ import GestionAdtvo from '../views/Admin/GestionUnidadesAdtvo.vue';
 import GestionMotivos from '../views/Admin/GestionMotivos.vue';
 import InicioSolicitante from '../views/Solicitante/InicioSolicitante.vue'
 import GestionConsultores from '../views/Admin/GestionConsultores.vue';
+import InicioConsultor from '../views/Consultor/InicioConsultor.vue'
 
 Vue.use(VueRouter)
 
@@ -78,6 +79,12 @@ const routes = [
         name: "GestionConsultores",
         component: GestionConsultores,
         meta: { roles: ["ROLE_ADMIN"] },
+    },
+    {
+        path: "/consultor/inicio",
+        name: "consultorInicio",
+        component: InicioConsultor,
+        //meta: { roles: ["ROLE_CONSULTOR"] },
     },
 ]
 
