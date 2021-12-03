@@ -101,10 +101,6 @@
 import HeaderSolicitante from "../../components/HeaderSolicitante.vue";
 import api from "../../util/api";
 
-var fecha = new Date(2021,12,17,13,30,0);
-var fechaActual = fecha.getFullYear()+'-'+(fecha.getMonth()+1)+'-'+(fecha.getDate()+1);
-
-console.log(fechaActual);
 export default {
   components: {
     HeaderSolicitante,
@@ -228,7 +224,7 @@ export default {
       });
 
       this.form = {
-        fecha: fecha,
+        fecha: new Date(this.dateSolicitud+" "+this.timeSolicitud),
         estado: 'Pendiente',
         solicitante: {
             idSolicitante: this.idSolicitante,

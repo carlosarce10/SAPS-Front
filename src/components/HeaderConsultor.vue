@@ -35,26 +35,18 @@
           <b-button variant="outline-success"
             ><b-icon
               class="float-start"
-              icon="person"
+              icon="calendar3"
               aria-hidden="true"
             ></b-icon>
-            Perfil
-          </b-button>
+            Consulta de sesiones</b-button
+          >
           <b-button variant="outline-success"
             ><b-icon
               class="float-start"
               icon="card-checklist"
               aria-hidden="true"
             ></b-icon>
-            Gestión de sesiones</b-button
-          >
-          <b-button variant="outline-success"
-            ><b-icon
-              class="float-start"
-              icon="calendar3"
-              aria-hidden="true"
-            ></b-icon>
-            Consulta de sesiones</b-button
+            Bitácora de consultas</b-button
           >
         </div>
       </div>

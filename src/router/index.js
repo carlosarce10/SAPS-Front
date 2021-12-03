@@ -13,6 +13,7 @@ import InicioSolicitante from '../views/Solicitante/InicioSolicitante.vue'
 import GestionConsultores from '../views/Admin/GestionConsultores.vue';
 import ConsultasSolicitante from '../views/Solicitante/ConsultasSolicitante.vue';
 import RegistroSolicitud from '../views/Solicitante/RegistroSolicitud.vue';
+import InicioConsultor from '../views/Consultor/InicioConsultor.vue';
 
 Vue.use(VueRouter)
 
@@ -93,6 +94,12 @@ const routes = [
         component: RegistroSolicitud,
         //meta: { roles: ["ROLE_ADMIN"] },
     },
+    {
+        path: "/consultor/inicio",
+        name: "consultorInicio",
+        component: InicioConsultor,
+        //meta: { roles: ["ROLE_CONSULTOR"] },
+    },
 ]
 
 
@@ -119,4 +126,4 @@ router.beforeEach((to, from, next) => {
     }
   });
 
-  export default router;
+export default router;

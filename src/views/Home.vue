@@ -87,7 +87,7 @@ export default {
               if (auth == 'ROLE_ADMIN') {
                 this.$router.push({ name: 'InicioAdmin' });
               } else if (auth == 'ROLE_CONSULTOR') {
-                this.$router.push({ name: 'InicioDocente' });
+                this.$router.push({ name: 'consultorInicio' });
               } else if (auth == 'ROLE_SOLICITANTE') {
                 this.$router.push({ name: 'InicioSolicitante' });
               }
