@@ -1,12 +1,12 @@
 <template>
   <div class="row">
     <div>
-      <HeaderSolicitante />
+      <HeaderAdmin />
     </div>
     <div class="container pt-4">
       <div class="row perfil rounded">
         <div class="col-12 float-start">
-          <h4 class="float-start p-1">Consultas de sesiones</h4>
+          <h4 class="float-start p-1">Bitacora de consultas</h4>
         </div>
       </div>
     </div>
@@ -25,15 +25,15 @@
             <tbody>
               <tr
                 v-for="(consulta, item) in listaConsulta"
-                :key="consulta.idConsulta"
+                :key="consulta.idBitacoraConsulta"
               >
                 <th>{{ item + 1 }}</th>
-                <td>{{ consulta.consultor.usuario.nombre +
+                <td>{{ consulta.consulta.consultor.usuario.nombre +
                     " " +
-                    consulta.consultor.usuario.apellidoPaterno +
+                    consulta.consulta.consultor.usuario.apellidoPaterno +
                     " " +
-                    consulta.consultor.usuario.apellidoMaterno}}</td>
-                <td>{{ consulta.solicitud.fecha }}</td>
+                    consulta.consulta.consultor.usuario.apellidoMaterno}}</td>
+                <td>{{ consulta.consulta.solicitud.fecha }}</td>
               </tr>
             </tbody>
           </table>
@@ -55,37 +55,26 @@
 </template>
 
 <script>
-import HeaderSolicitante from "../../components/HeaderSolicitante.vue";
+import HeaderAdmin from "../../components/HeaderAdmin.vue";
 import Footer from "../../components/Footer.vue";
 import api from '../../util/api';
 export default {
   components: {
-    HeaderSolicitante,
+    HeaderAdmin,
     Footer,
   },
   data() {
     return {
       listaConsulta: [],
-      correo: localStorage.getItem("username"),
-      idUsuario: "",
     };
   },
   beforeMount() {
-    this.getUser();
     this.getConsultas();
   },
   methods: {
-    getUser() {
-      api.doGet("saps/usuario/getOne/" + this.correo).then((response) => {
-        this.idUsuario = response.data.idUsuario;
-        console.log(response.data.idUsuario);
-        this.getConsultas(this.idUsuario);
-      });
-      console.log("correo --> " + this.correo);
-    },
-    getConsultas(id) {
+    getConsultas() {
       api
-        .doGet('saps/consulta/getAll/usuario/' + id)
+        .doGet('saps/bitacora/consulta/getAll')
         .then((response) => (this.listaConsulta = response.data))
         .finally(() => (this.loading = false));
     },

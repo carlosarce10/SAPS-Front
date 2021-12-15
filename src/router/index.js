@@ -14,6 +14,10 @@ import GestionConsultores from '../views/Admin/GestionConsultores.vue';
 import ConsultasSolicitante from '../views/Solicitante/ConsultasSolicitante.vue';
 import RegistroSolicitud from '../views/Solicitante/RegistroSolicitud.vue';
 import InicioConsultor from '../views/Consultor/InicioConsultor.vue';
+import Solicitudes from '../views/Solicitante/Solicitudes.vue';
+import SolicitudesAdmin from '../views/Admin/SolicitudesAdmin.vue';
+import ConsultaSesiones from '../views/Admin/ConsultaSesiones.vue';
+
 
 Vue.use(VueRouter)
 
@@ -100,6 +104,24 @@ const routes = [
         component: InicioConsultor,
         //meta: { roles: ["ROLE_CONSULTOR"] },
     },
+    {
+        path: "/solicitante/solicitudes",
+        name: "Solicitudes",
+        component:  Solicitudes,
+       //meta: { roles: ["ROLE_SOLICITANTE"] },
+    },
+    {
+        path: "/administrador/solicitudesAdministrador",
+        name: "SolicitudesAdmin",
+        component: SolicitudesAdmin,
+        //meta: { roles: ["ROLE_ADMIN"] },
+    },  
+    {
+        path: "/administrador/consultaSesiones",
+        name: "ConsultaSesiones",
+        component: ConsultaSesiones,
+        //meta: { roles: ["ROLE_ADMIN"] },
+    },  
 ]
 
 

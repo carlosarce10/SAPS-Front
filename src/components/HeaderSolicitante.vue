@@ -60,6 +60,16 @@
             ></b-icon>
             Solicitar apoyo</b-button
           >
+          <b-button 
+          href="/solicitante/solicitudes"
+          variant="outline-success"
+            ><b-icon
+              class="float-start"
+              icon="card-list"
+              aria-hidden="true"
+            ></b-icon>
+            Bitacora de solicitudes</b-button
+          >
         </div>
       </div>
       <hr />

@@ -111,12 +111,22 @@
             Gestión de Consultores</b-button
           >
           <b-button variant="outline-success"
+          href="/administrador/consultaSesiones"
             ><b-icon
               class="float-start"
               icon="calendar-check"
               aria-hidden="true"
             ></b-icon>
             Consulta de sesiones</b-button
+          >
+          <b-button variant="outline-success"
+          href="/administrador/solicitudesAdministrador"
+            ><b-icon
+              class="float-start"
+              icon="calendar-check"
+              aria-hidden="true"
+            ></b-icon>
+            Bitacora de solicitudes</b-button
           >
         </div>
       </div>
