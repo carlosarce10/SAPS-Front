@@ -58,7 +58,7 @@
                   <button
                     type="button"
                     class="btn btn-success"
-                    @click="asignarConsultor(solicitud)"
+                    @click="getSolicitud(solicitud)"
                     data-bs-toggle="modal"
                     data-bs-target="#asignarModal"
                     v-else
@@ -70,8 +70,7 @@
                   <b-button variant="secondary"
                     disabled
                     type="button"
-                   
-                    v-if= "solicitud.estado === 'Pendiente'"
+                    v-if= "solicitud.estado != 'Asignada'"
                   >
                     <b-icon icon="envelope-fill" aria-hidden="true" ></b-icon>
                   </b-button>
@@ -79,7 +78,7 @@
                     type="button"
                     data-bs-toggle="modal"
                     data-bs-target="#correoModal"
-                    @click="getCorreo(solicitud.solicitante.usuario.correo)"
+                    @click="getCorreo(solicitud.solicitante.usuario.correo, solicitud.idSolicitud)"
                     v-else
                   >
                     <b-icon icon="envelope-fill" aria-hidden="true"></b-icon>
@@ -134,12 +133,12 @@
               >
                 Cerrar
               </button>
-              <button type="button" class="btn btn-primary" @click="asignarConsultor(solicitud)">Asignar</button>
+              <button type="button" class="btn btn-primary" @click="asignarConsultor(solicitud)" data-bs-dismiss="modal">Asignar</button>
             </div>
           </div>
         </div>
       </div>
-      <!-- Modalpara verificar consultor -->
+      <!-- Modal para verificar consultor -->
       <div
         class="modal fade"
         id="verificarModal"
@@ -164,47 +163,52 @@
               <div class="container-fluid">
                 <div class="row">
                   <div class="col-md-12">
-                      Consultor elegido: 
-                      <span><b>{{ this.namePerson }}</b></span>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-md-12">
-                    Fecha seleccionada: 
-                    <span><b>{{ this.fechaSelected }}</b></span>
+                    <div class="card border-success mb-3">
+                      <div class="card-body">
+                          <span>Consultor elegido: <b>{{ this.namePerson }}</b></span>
+                          <br>
+                          Fecha seleccionada: 
+                          <span><b>{{ this.fechaSelected }}</b></span>
+                          <hr>
+                          <div class="d-grid gap-2" v-if="this.solicitud.estado === 'Pendiente'">
+                            <button class="btn btn-success" type="button" @click="generarConsulta(solicitud)" data-bs-dismiss="modal">Generar consulta</button>
+                          </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <hr>
                 <div class="row">
                   <div class="col-md-12">
                     <div class="card border-warning mb-3">
-                    <div class="card-body">
-                      <h5 class="card-title">Asignar nuevo consultor</h5>
-                      <label class="float-start mb-2">Consultores</label>
-                      <b-form-select required v-model="consultorSelected" class="form-select">
-                        <option value="">Elige una opción</option>
-                        <template  v-if="consultorSelected != null">
-                          <option
-                            v-for="consultor in consultoresFilter"
-                            v-bind:key="consultor.consultor"
-                            v-bind:value="consultor.idConsultor"
-                          >
-                            {{ consultor.usuario.nombre + ' ' + consultor.usuario.apellidoPaterno + ' ' + consultor.usuario.apellidoMaterno }}
-                          </option>
-                        </template>
-                        <template v-else>
-                          <option
-                            v-for="consultor in consultores"
-                            v-bind:key="consultor.consultor"
-                            v-bind:value="consultor.idConsultor"
-                          >
-                            {{ consultor.usuario.nombre + ' ' + consultor.usuario.apellidoPaterno + ' ' + consultor.usuario.apellidoMaterno }}
-                          </option>
-                        </template>
-                      </b-form-select>
-                      <button type="button" class="btn btn-warning float-start mt-3" @click="asignarConsultor(solicitud)">Asignar</button>
-                    </div>
+                      <div class="card-body">
+                        <h5 class="card-title">Asignar nuevo consultor</h5>
+                        <label class="float-start mb-2">Consultores</label>
+                        <b-form-select required v-model="consultorSelected" class="form-select">
+                          <option value="">Elige una opción</option>
+                          <template  v-if="consultorSelected != null">
+                            <option
+                              v-for="consultor in consultoresFilter"
+                              v-bind:key="consultor.consultor"
+                              v-bind:value="consultor.idConsultor"
+                            >
+                              {{ consultor.usuario.nombre + ' ' + consultor.usuario.apellidoPaterno + ' ' + consultor.usuario.apellidoMaterno }}
+                            </option>
+                          </template>
+                          <template v-else>
+                            <option
+                              v-for="consultor in consultores"
+                              v-bind:key="consultor.consultor"
+                              v-bind:value="consultor.idConsultor"
+                            >
+                              {{ consultor.usuario.nombre + ' ' + consultor.usuario.apellidoPaterno + ' ' + consultor.usuario.apellidoMaterno }}
+                            </option>
+                          </template>
+                        </b-form-select>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-warning float-start mt-3" @click="asignarConsultor(solicitud)" data-bs-dismiss="modal">Asignar</button>
+                        </div>
+                      </div>
                   </div>
                   </div>
                 </div>
@@ -295,9 +299,9 @@ export default {
       consultorSelected: '',
       fechaSelected: '',
       destinatario: '',
+      solicitudEmail: '',
       enlaceMeet: '',
       solicitud: {},
-      solicitudSelected: {},
       solicitudes: [],
       consultores: [],
       consultoresFilter: []
@@ -357,8 +361,12 @@ export default {
         })
         .finally(() => (this.loading = false));
     },
+    getSolicitud(solicitud){
+      this.solicitud = solicitud
+    },
     changeStatus(solicitud, consultor) {
-      if (solicitud.estado === 'Pendiente') {
+      console.log(solicitud+''+consultor);
+      /*if (solicitud.estado === 'Pendiente') {
         solicitud.estado = "Asignada";
       } else {
         solicitud.estado = "Pendiente";
@@ -398,7 +406,7 @@ export default {
             });
           }
         })
-        .finally(() => (this.loading = false));
+        .finally(() => (this.loading = false));*/
     },
     verificarConsultor(solicitud) {
       this.solicitud = solicitud
@@ -407,49 +415,89 @@ export default {
       this.fechaSelected = solicitud.fecha;
     },
     asignarConsultor(solicitud) {
-      console.log(solicitud);
-      console.log(this.consultorSelected);
-      //solicitud.consultor.idConsultor = this.consultorSelected
-      /*api
-        .doPost('saps/solicitud/save', solicitud)
-        .then(() => {
-          this.$swal({
-            title: 'Solicitud modificada',
-            text: "El consultor ha sido asignado correctamente",
-            icon: 'success',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Aceptar'
-          });
-        })
-        .catch((err) => {
-          let errorResponse = err.response.data;
-          if (errorResponse.errorExists) {
+      if (this.consultorSelected != null) {
+        this.solicitud = solicitud
+        solicitud.consultor.idConsultor = this.consultorSelected
+
+        if (this.solicitud.estado === "Pendiente") {
+            this.solicitud.estado = "Asignada"
+            this.generarConsulta()
+        }
+        
+        api
+          .doPost('saps/solicitud/save', solicitud)
+          .then(() => {
             this.$swal({
-              title: 'Lo sentimos',
-              text: "Hubo un error al modificar la solicitud",
-              icon: 'error',
+              title: 'Solicitud modificada',
+              text: "El consultor ha sido asignado correctamente",
+              icon: 'success',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'Aceptar'
+            });
+          })
+          .catch((err) => {
+            let errorResponse = err.response.data;
+            if (errorResponse.errorExists) {
+              this.$swal({
+                title: 'Lo sentimos',
+                text: "Hubo un error al modificar la solicitud",
+                icon: 'error',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Aceptar'
+              });
+            } else {
+              this.$swal({
+                title: 'Lo sentimos',
+                text: "Hubo un error en el servidor",
+                icon: 'error',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Aceptar'
+              });
+            }
+          })
+          .finally(() => (this.getSolicitudes()));
+      } else {
+        this.$swal({
+              title: 'Favor de seleccionar un consultor',
+              text: "Es necesario llenar todos los campos",
+              icon: 'warning',
               confirmButtonColor: '#d33',
               confirmButtonText: 'Aceptar'
             });
-          } else {
-            this.$swal({
-              title: 'Lo sentimos',
-              text: "Hubo un error en el servidor",
-              icon: 'error',
-              confirmButtonColor: '#d33',
-              confirmButtonText: 'Aceptar'
-            });
-          }
-        })
-        .finally(() => (this.loading = false));*/
+      }
     },
-    getCorreo(mail) {
+    generarConsulta(){
+      let consulta = {
+        fecha: new Date().toISOString(),
+        estado: 'Pendiente',
+        consultor: {
+          idConsultor: this.solicitud.consultor.idConsultor
+        },
+        solicitud: {
+          idSolicitud: this.solicitud.idSolicitud
+        }
+      }
+
+      api
+        .doPost('saps/consulta/save', consulta)
+        .then(() => {
+          this.getSolicitudes()
+          this.$swal({
+            title: 'Consulta generada',
+            text: "La consulta ha sido generada correctamente",
+            icon: 'success',
+          })
+      })
+    },
+    getCorreo(mail, solicitud) {
       this.destinatario = mail;
+      this.solicitudEmail = solicitud;
     }, 
     sendMail(destino, enlace) {
       let mail = {
         "to": destino,
-        "linkCall": enlace
+        "linkCall": enlace,
+        "idConsulta": this.solicitudEmail
       }
       api
         .doPost('saps/mail/send', mail)

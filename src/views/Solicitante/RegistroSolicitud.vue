@@ -36,7 +36,7 @@
       </div>
       <div class="mb-3 col-12">
         <label for="timeSolicitud" class="float-start">Elige una hora</label>
-        <b-form-timepicker id="timeSolicitud" v-model="timeSolicitud" locale="es"></b-form-timepicker>
+        <b-form-timepicker id="timeSolicitud" v-model="timeSolicitud" locale="es-MX"></b-form-timepicker>
       </div>
       <div class="mb-3 col-12">
         <label class="float-start">Motivo</label>
@@ -110,8 +110,8 @@ export default {
       listaMotivos: [],
       listaSintomas: [],
       consultores: [],
-      form: {
-      },
+      form: {},
+      consulta: {},
       dateSolicitud: '',
       timeSolicitud: '',
       time: '',
@@ -187,11 +187,12 @@ export default {
         .doGet('saps/consultor/getAll')
         .then((response) => {
           this.consultores = response.data
-          this.consultor = this.consultores[0].idConsultor
+          //this.consultor = this.consultores[0].idConsultor
         })
         .catch((error) => {
-          let errorResponse = error.response.data;
-          if (errorResponse.errorExists) {
+          let errorResponse = error;
+          console.log(error);
+          if (errorResponse) {
             this.$swal({
               title: 'Lo sentimos',
               text: "Hubo un error al recuperar los consultores",
@@ -223,33 +224,42 @@ export default {
         listSintomas.push({'idSintoma': s})
       });
 
+      let dateSolicitud = new Date(this.dateSolicitud+" "+this.timeSolicitud).toISOString();
+      dateSolicitud = dateSolicitud.split('T')[0]
+
+      if (this.consultor != null) {
+        this.consultor = {
+          idConsultor: this.consultor
+        }
+      }
+
       this.form = {
-        fecha: new Date(this.dateSolicitud+" "+this.timeSolicitud),
+        fecha: dateSolicitud+'T'+this.timeSolicitud,
         estado: 'Pendiente',
         solicitante: {
             idSolicitante: this.idSolicitante,
         },
         motivos: listMotivos, 
         sintomas: listSintomas, 
-        consultor: {
-          idConsultor: this.consultor
-        }
+        consultor: this.consultor
       }
+
+      console.log(this.form);
+
       api
         .doPost('saps/solicitud/save', this.form)
         .then(() => {
           this.$swal({
-            title: 'Solicitud registrada',
-            text: "La solicitud ha sido generada y enviada correctamente",
-            icon: 'success',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Aceptar'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              this.$router.push("/solicitante/inicio");
-            }
-          })
-          
+              title: 'Solicitud registrada',
+              text: "La solicitud ha sido generada y enviada correctamente",
+              icon: 'success',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'Aceptar'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.$router.push("/solicitante/inicio");
+              }
+            })
         })
         .catch((error) => {
           let errorResponse = error;
