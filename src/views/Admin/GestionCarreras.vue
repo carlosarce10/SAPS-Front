@@ -7,7 +7,7 @@
       <div class="row perfil rounded">
         <div class="col-12 float-start">
           <h4 class="float-start p-1">
-            Gestión de síntomas
+            Gestión de carreras
           </h4>
         </div>
       </div>
@@ -21,31 +21,31 @@
             variant="outline-success"
             data-bs-toggle="modal"
             data-bs-target="#agregarModal"
-            > Registrar síntoma<b-icon icon="plus" aria-hidden="true"></b-icon>
+            > Registrar carreras<b-icon icon="plus" aria-hidden="true"></b-icon>
           </b-button>
         </div>
       </div>
-      <!-- Tabla síntomas -->
+      <!-- Tabla carreras -->
       <div class="row shadow rounded">
         <div class="col-12">
           <table class="table">
             <thead class="table-light">
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Síntomas</th>
+                <th scope="col">Carrera</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="(sintomas, item) in listaSintomas"
-                :key="sintomas.idSintoma"
+                v-for="(carreras, item) in listaCarreras"
+                :key="carreras.idCarrera"
               >
                 <th>{{ item + 1 }}</th>
-                <td>{{ sintomas.sintoma }}</td>
+                <td>{{ carreras.carrera }}</td>
                 <td>
                   <b-button
-                    @click="datosSintoma(sintomas.idSintoma)"
+                    @click="datosCarrera(carreras.idCarrera)"
                     type="button"
                     variant="outline-primary"
                     data-bs-toggle="modal"
@@ -53,7 +53,7 @@
                     ><b-icon icon="pencil-square" aria-hidden="true"></b-icon>
                   </b-button>
                   <b-button
-                    @click="eliminar(sintomas.idSintoma)"
+                    @click="eliminar(carreras.idCarrera)"
                     type="button"
                     variant="outline-danger"
                     class="ml-1"
@@ -63,7 +63,7 @@
               </tr>
             </tbody>
           </table>
-          <div class="container" v-if="listaSintomas.length < 1">
+          <div class="container" v-if="listaCarreras.length < 1">
             <img
               src="../../assets/sinDatos.png"
               style="height: 80px; width: 80px"
@@ -75,13 +75,13 @@
           </div>
         </div>
       </div>
-      <!-- Modal para editar los síntomas -->
+      <!-- Modal para editar carreras -->
       <div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Editar Síntoma
+                Editar Carreras
               </h5>
               <button
                 type="button"
@@ -92,13 +92,27 @@
             </div>
             <div class="modal-body">
               <form>
-                <label class="float-start">Síntomas</label>
+                <label class="float-start">Carreras</label>
                 <input
-                  v-model="form.sintoma"
+                  v-model="form.carrera"
                   type="text"
                   class="form-control"
                   required
                 />
+                <label class="float-start">División académica</label>
+                <b-form-select
+                  v-model="division"
+                  size="sm"
+                  class="form-select form-select-sm mt-3"
+                >
+                  <option
+                    v-for="div in listaDivisiones"
+                    v-bind:key="div.division"
+                    v-bind:value="div.idDivision"
+                  >
+                    {{ div.division }}
+                  </option>
+                </b-form-select>
               </form>
             </div>
             <div class="modal-footer">
@@ -116,7 +130,7 @@
           </div>
         </div>
       </div>
-      <!-- Modal para agregar sintomas -->
+      <!-- Modal para agregar carreras -->
       <div
         class="modal fade"
         id="agregarModal"
@@ -127,7 +141,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Agregar Síntomas
+                Agregar Carrera
               </h5>
               <button
                 type="button"
@@ -138,14 +152,25 @@
             </div>
             <div class="modal-body">
               <form>
-                <label class="float-start">Síntomas</label>
+                <label class="float-start">Carrera</label>
                 <input
-                  v-model="form.sintoma"
+                  v-model="form.carrera"
                   type="text"
-                  class="form-control"
-                  placeholder="Inseguridad"
+                  class="form-control mb-3"
+                  placeholder="Tecnologías"
                   required
                 />
+                <label class="float-start">División académica</label>
+                <b-form-select v-model="division" class="form-select" required>
+                  <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+                  <option
+                    v-for="div in listaDivisiones"
+                    v-bind:key="div.division"
+                    v-bind:value="div.idDivision"
+                  >
+                    {{ div.division }}
+                  </option>
+                </b-form-select>
               </form>
             </div>
             <div class="modal-footer">
@@ -185,21 +210,25 @@ export default {
   data() {
     return {
       form: {
-        sintoma: '',
+        carrera: '',
       },
-      listaSintomas: [],
-      sintomaEdit: {},
+      division: '',
+      listaCarreras: [],
+      carreraEdit: {},
+      listaDivisiones: [],
+      carreras: {},
     };
   },
   beforeMount() {
-    this.getSintomas();
+    this.getCarreras();
+    this.getDivisiones();
   },
   computed: {},
   methods: {
-    getSintomas() {
+    getCarreras() {
       api
-        .doGet('saps/sintoma/getAll')
-        .then((response) => (this.listaSintomas = response.data))
+        .doGet('saps/carrera/getAll')
+        .then((response) => (this.listaCarreras = response.data))
         .catch((error) => {
           let errorResponse = error.response.data;
           if (errorResponse.errorExists) {
@@ -217,15 +246,19 @@ export default {
         .finally(() => (this.loading = false));
     },
     registrar() {
+      this.carreras = {
+        carrera: this.form.carrera,
+        division: { idDivision: this.division },
+      };
       api
-        .doPost('saps/sintoma/save', this.form)
+        .doPost('saps/carrera/save', this.carreras)
         .then(() => {
           this.$swal({
-            title: 'El síntoma se registro exitosamente',
+            title: 'La carrera se registro exitosamente',
             icon: 'success',
           });
           this.onReset();
-          this.getSintomas();
+          this.getCarreras();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -252,7 +285,7 @@ export default {
     },
     eliminar(id) {
       this.$swal({
-        title: '¿Estás seguro de eliminar este síntoma?',
+        title: '¿Estás seguro de eliminar esta carrera?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#00ab84',
@@ -263,13 +296,13 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           api
-            .doDelete('saps/sintoma/delete/' + id)
+            .doDelete('saps/carrera/delete/' + id)
             .then(() => {
               this.$swal({
-                title: '¡Síntoma eliminado exitosamente!',
+                title: '¡Carrera eliminada exitosamente!',
                 icon: 'success',
               });
-              this.getSintomas();
+              this.getCarreras();
             })
             .catch((error) => {
               let errorResponse = error;
@@ -297,19 +330,19 @@ export default {
         }
       });
     },
-    datosSintoma(id) {
+    datosCarrera(id) {
       api
-        .doGet('saps/sintoma/getOne/' + id)
+        .doGet('saps/carrera/getOne/' + id)
         .then((response) => {
           console.log('response: ' + response.data);
-          this.form.id = response.data.idSintoma;
-          this.form.sintoma = response.data.sintoma;
+          this.form.id = response.data.idCarrera;
+          this.form.carrera = response.data.carrera;
         })
         .catch((error) => {
           let errorResponse = error;
           if (errorResponse.errorExists) {
             this.$swal({
-              title: 'Oops! Ha ocurrido un error en el servidor.',
+              title: 'Oops! Ha zocurrido un error en el servidor.',
               html:
                 "<span style='font-size:14pt'><b>" +
                 errorResponse.code +
@@ -329,19 +362,21 @@ export default {
         });
     },
     editar() {
-      this.sintomaEdit = {
-        idSintoma: this.form.id,
-        sintoma: this.form.sintoma,
+      //this.carreras = {carrera: this.form.carrera, division: {idDivision: this.division}}
+      this.carreraEdit = {
+        idCarrera: this.form.id,
+        carrera: this.form.carrera,
+        division: { idDivision: this.division },
       };
       api
-        .doPut('saps/sintoma/update', this.sintomaEdit)
+        .doPut('saps/carrera/update', this.carreraEdit)
         .then(() => {
           this.$swal({
-            title: 'El síntoma se ha editado exitosamente',
+            title: 'La carrera se ha editado exitosamente',
             icon: 'success',
           });
           this.onReset();
-          this.getSintomas();
+          this.getCarreras();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -366,8 +401,14 @@ export default {
           }
         });
     },
+    getDivisiones() {
+      api
+        .doGet('saps/division/getAll')
+        .then((response) => (this.listaDivisiones = response.data));
+    },
     onReset() {
-      this.form.sintoma = '';
+      this.form.carrera = '';
+      this.form.division = '';
     },
   },
 };

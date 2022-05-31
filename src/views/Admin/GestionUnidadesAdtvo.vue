@@ -7,7 +7,7 @@
       <div class="row perfil rounded">
         <div class="col-12 float-start">
           <h4 class="float-start p-1">
-            Gestión de síntomas
+            Gestión de unidades administrativas
           </h4>
         </div>
       </div>
@@ -21,31 +21,31 @@
             variant="outline-success"
             data-bs-toggle="modal"
             data-bs-target="#agregarModal"
-            > Registrar síntoma<b-icon icon="plus" aria-hidden="true"></b-icon>
+            > Registrar unidad administrativa<b-icon icon="plus" aria-hidden="true"></b-icon>
           </b-button>
         </div>
       </div>
-      <!-- Tabla síntomas -->
+      <!-- Tabla de unidades administrativas -->
       <div class="row shadow rounded">
         <div class="col-12">
           <table class="table">
             <thead class="table-light">
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Síntomas</th>
+                <th scope="col">Unidades Administrativas</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="(sintomas, item) in listaSintomas"
-                :key="sintomas.idSintoma"
+                v-for="(departamentos, item) in listaDepartamentos"
+                :key="departamentos.idDepartamento"
               >
                 <th>{{ item + 1 }}</th>
-                <td>{{ sintomas.sintoma }}</td>
+                <td>{{ departamentos.departamento }}</td>
                 <td>
                   <b-button
-                    @click="datosSintoma(sintomas.idSintoma)"
+                    @click="datosDepartamento(departamentos.idDepartamento)"
                     type="button"
                     variant="outline-primary"
                     data-bs-toggle="modal"
@@ -53,7 +53,7 @@
                     ><b-icon icon="pencil-square" aria-hidden="true"></b-icon>
                   </b-button>
                   <b-button
-                    @click="eliminar(sintomas.idSintoma)"
+                    @click="eliminar(departamentos.idDepartamento)"
                     type="button"
                     variant="outline-danger"
                     class="ml-1"
@@ -63,7 +63,7 @@
               </tr>
             </tbody>
           </table>
-          <div class="container" v-if="listaSintomas.length < 1">
+          <div class="container" v-if="listaDepartamentos.length < 1">
             <img
               src="../../assets/sinDatos.png"
               style="height: 80px; width: 80px"
@@ -75,13 +75,13 @@
           </div>
         </div>
       </div>
-      <!-- Modal para editar los síntomas -->
+      <!-- Modal para editar departamentos -->
       <div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Editar Síntoma
+                Editar Unidades Administrativas
               </h5>
               <button
                 type="button"
@@ -92,9 +92,9 @@
             </div>
             <div class="modal-body">
               <form>
-                <label class="float-start">Síntomas</label>
+                <label class="float-start">Unidades Administrativas</label>
                 <input
-                  v-model="form.sintoma"
+                  v-model="form.departamento"
                   type="text"
                   class="form-control"
                   required
@@ -116,7 +116,7 @@
           </div>
         </div>
       </div>
-      <!-- Modal para agregar sintomas -->
+      <!-- Modal para agregar departamentos -->
       <div
         class="modal fade"
         id="agregarModal"
@@ -127,7 +127,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">
-                Agregar Síntomas
+                Agregar Unidades Administrativas
               </h5>
               <button
                 type="button"
@@ -138,12 +138,12 @@
             </div>
             <div class="modal-body">
               <form>
-                <label class="float-start">Síntomas</label>
+                <label class="float-start">Unidad Administrativa</label>
                 <input
-                  v-model="form.sintoma"
+                  v-model="form.departamento"
                   type="text"
                   class="form-control"
-                  placeholder="Inseguridad"
+                  placeholder="Unidad administrativa"
                   required
                 />
               </form>
@@ -185,21 +185,21 @@ export default {
   data() {
     return {
       form: {
-        sintoma: '',
+        departamento: '',
       },
-      listaSintomas: [],
-      sintomaEdit: {},
+      listaDepartamentos: [],
+      departamentoEdit: {},
     };
   },
   beforeMount() {
-    this.getSintomas();
+    this.getDepartamentos();
   },
   computed: {},
   methods: {
-    getSintomas() {
+    getDepartamentos() {
       api
-        .doGet('saps/sintoma/getAll')
-        .then((response) => (this.listaSintomas = response.data))
+        .doGet('saps/departamento/getAll')
+        .then((response) => (this.listaDepartamentos = response.data))
         .catch((error) => {
           let errorResponse = error.response.data;
           if (errorResponse.errorExists) {
@@ -218,14 +218,14 @@ export default {
     },
     registrar() {
       api
-        .doPost('saps/sintoma/save', this.form)
+        .doPost('saps/departamento/save', this.form)
         .then(() => {
           this.$swal({
-            title: 'El síntoma se registro exitosamente',
+            title: 'La unidad administrativa se registro exitosamente',
             icon: 'success',
           });
           this.onReset();
-          this.getSintomas();
+          this.getDepartamentos();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -252,7 +252,7 @@ export default {
     },
     eliminar(id) {
       this.$swal({
-        title: '¿Estás seguro de eliminar este síntoma?',
+        title: '¿Estás seguro de eliminar esta unidad administrativa?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#00ab84',
@@ -263,13 +263,13 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           api
-            .doDelete('saps/sintoma/delete/' + id)
+            .doDelete('saps/departamento/delete/' + id)
             .then(() => {
               this.$swal({
-                title: '¡Síntoma eliminado exitosamente!',
+                title: '¡Unidad administrativa eliminada exitosamente!',
                 icon: 'success',
               });
-              this.getSintomas();
+              this.getDepartamentos();
             })
             .catch((error) => {
               let errorResponse = error;
@@ -297,13 +297,13 @@ export default {
         }
       });
     },
-    datosSintoma(id) {
+    datosDepartamento(id) {
       api
-        .doGet('saps/sintoma/getOne/' + id)
+        .doGet('saps/departamento/getOne/' + id)
         .then((response) => {
           console.log('response: ' + response.data);
-          this.form.id = response.data.idSintoma;
-          this.form.sintoma = response.data.sintoma;
+          this.form.id = response.data.idDepartamento;
+          this.form.departamento = response.data.departamento;
         })
         .catch((error) => {
           let errorResponse = error;
@@ -329,19 +329,19 @@ export default {
         });
     },
     editar() {
-      this.sintomaEdit = {
-        idSintoma: this.form.id,
-        sintoma: this.form.sintoma,
+      this.departamentoEdit = {
+        idDepartamento: this.form.id,
+        departamento: this.form.departamento,
       };
       api
-        .doPut('saps/sintoma/update', this.sintomaEdit)
+        .doPut('saps/departamento/update', this.departamentoEdit)
         .then(() => {
           this.$swal({
-            title: 'El síntoma se ha editado exitosamente',
+            title: 'La unidad administrativa se ha editado exitosamente',
             icon: 'success',
           });
           this.onReset();
-          this.getSintomas();
+          this.getDepartamentos();
         })
         .catch((error) => {
           let errorResponse = error;
@@ -367,7 +367,7 @@ export default {
         });
     },
     onReset() {
-      this.form.sintoma = '';
+      this.form.departamento = '';
     },
   },
 };

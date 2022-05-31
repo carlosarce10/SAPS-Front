@@ -11,7 +11,7 @@
           </h4>
         </div>
       </div>
-    </div>
+    </div> 
     <div class="container pt-4">
       <div class="row shadow rounded">
         <div class="col-12">
@@ -20,55 +20,77 @@
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Nombre completo</th>
-                <th scope="col">Nivel Académico</th>
-                <th scope="col">Carrera</th>
-                <th scope="col">División</th>
-                <th scope="col">Motivo</th>
-                <th scope="col">Asignar consultor</th>
+                <th scope="col">Tipo de usuario</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Correo</th>
+                <!--<th scope="col">Sintomas</th>-->
+                <th scope="col">Consultor</th>
+                <th scope="col">Enviar correo</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Carlos Eduardo Arce de la Torre</td>
-                <td>Ingenieria</td>
-                <td>DyGS</td>
-                <td>DATIC</td>
-                <td>Adicciones</td>
+              <tr 
+                v-for="(solicitud, item) in solicitudes"
+                :key="solicitud.idSolicitud"
+              >
+                <th scope="row">{{ item + 1 }}</th>
+                <td>{{ solicitud.solicitante.usuario.nombre + ' ' + solicitud.solicitante.usuario.apellidoPaterno + ' ' + solicitud.solicitante.usuario.apellidoMaterno }}</td>
+                <td>{{ solicitud.solicitante.usuario.tipoUsuario.tipoUsuario }}</td>
+                  <td v-if= "solicitud.estado === 'Pendiente'" style="color: red">
+                    <span class="badge bg-danger" @click="changeStatus(solicitud, null)" style="cursor: pointer;">{{ solicitud.estado }}</span>
+                  </td>
+                  <td v-else style="color: green">
+                    <span class="badge bg-success" @click="changeStatus(solicitud, null)" style="cursor: pointer;">{{ solicitud.estado }}</span>
+                  </td>
+                <td>{{ solicitud.solicitante.usuario.correo }}</td>
+                <!--<td>{{ solicitud.sintomas }}</td>-->
                 <td>
                   <button
                     type="button"
+                    class="btn btn-warning"
+                    @click="verificarConsultor(solicitud)"
+                    data-bs-toggle="modal"
+                    data-bs-target="#verificarModal"
+                    v-if= "solicitud.consultor != null"
+                  >
+                    Verificar
+                  </button>
+                  <button
+                    type="button"
                     class="btn btn-success"
+                    @click="asignarConsultor(solicitud)"
                     data-bs-toggle="modal"
                     data-bs-target="#asignarModal"
+                    v-else
                   >
                     Asignar
                   </button>
                 </td>
-              </tr>
-              <tr>
-                <th scope="row">1</th>
-                <td>Fernanda Zavala Alpuche</td>
-                <td>Ingenieria</td>
-                <td>DyGS</td>
-                <td>DATIC</td>
-                <td>Insomnio y estrés</td>
                 <td>
-                  <button
+                  <b-button variant="secondary"
+                    disabled
                     type="button"
-                    class="btn btn-success"
-                    data-bs-toggle="modal"
-                    data-bs-target="#asignarModal"
+                   
+                    v-if= "solicitud.estado === 'Pendiente'"
                   >
-                    Asignar
-                  </button>
+                    <b-icon icon="envelope-fill" aria-hidden="true" ></b-icon>
+                  </b-button>
+                  <b-button variant="secondary"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#correoModal"
+                    @click="getCorreo(solicitud.solicitante.usuario.correo)"
+                    v-else
+                  >
+                    <b-icon icon="envelope-fill" aria-hidden="true"></b-icon>
+                  </b-button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <!-- Modalpara asignar consultor -->
+      <!-- Modal para asignar consultor -->
       <div
         class="modal fade"
         id="asignarModal"
@@ -80,7 +102,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="asignarModalLabel">
-                Asignar Consultor
+                Asignar consultor
               </h5>
               <button
                 type="button"
@@ -90,15 +112,19 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form @submit="onSubmit">
-                <label class="float-start">Nombre del consultor</label>
-                <b-form-select
-                  required
-                  :options="consultores"
-                  v-model="form.consultor"
-                  class="form-select"
-                />
-              </form>
+              <div class="mb-3">
+                <label class="float-start">Consultores</label>
+                <b-form-select required v-model="consultorSelected" class="form-select">
+                  <option value="">Elige una opción</option>
+                  <option
+                    v-for="consultor in consultores"
+                    v-bind:key="consultor.consultor"
+                    v-bind:value="consultor.idConsultor"
+                  >
+                    {{ consultor.usuario.nombre + ' ' + consultor.usuario.apellidoPaterno + ' ' + consultor.usuario.apellidoMaterno }}
+                  </option>
+                </b-form-select>
+              </div>
             </div>
             <div class="modal-footer">
               <button
@@ -108,7 +134,141 @@
               >
                 Cerrar
               </button>
-              <button type="button" class="btn btn-primary">Asignar</button>
+              <button type="button" class="btn btn-primary" @click="asignarConsultor(solicitud)">Asignar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modalpara verificar consultor -->
+      <div
+        class="modal fade"
+        id="verificarModal"
+        tabindex="-1"
+        aria-labelledby="verificarModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="verificarModalLabel">
+                Verificar consultor
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-12">
+                      Consultor elegido: 
+                      <span><b>{{ this.namePerson }}</b></span>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-12">
+                    Fecha seleccionada: 
+                    <span><b>{{ this.fechaSelected }}</b></span>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="card border-warning mb-3">
+                    <div class="card-body">
+                      <h5 class="card-title">Asignar nuevo consultor</h5>
+                      <label class="float-start mb-2">Consultores</label>
+                      <b-form-select required v-model="consultorSelected" class="form-select">
+                        <option value="">Elige una opción</option>
+                        <template  v-if="consultorSelected != null">
+                          <option
+                            v-for="consultor in consultoresFilter"
+                            v-bind:key="consultor.consultor"
+                            v-bind:value="consultor.idConsultor"
+                          >
+                            {{ consultor.usuario.nombre + ' ' + consultor.usuario.apellidoPaterno + ' ' + consultor.usuario.apellidoMaterno }}
+                          </option>
+                        </template>
+                        <template v-else>
+                          <option
+                            v-for="consultor in consultores"
+                            v-bind:key="consultor.consultor"
+                            v-bind:value="consultor.idConsultor"
+                          >
+                            {{ consultor.usuario.nombre + ' ' + consultor.usuario.apellidoPaterno + ' ' + consultor.usuario.apellidoMaterno }}
+                          </option>
+                        </template>
+                      </b-form-select>
+                      <button type="button" class="btn btn-warning float-start mt-3" @click="asignarConsultor(solicitud)">Asignar</button>
+                    </div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal para enviar correo -->
+      <div
+        class="modal fade"
+        id="correoModal"
+        tabindex="-1"
+        aria-labelledby="correoModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="correoModalLabel">
+                Enviar enlace Meet
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group mb-3">
+                <button class="btn btn-success" type="button" id="button-addon1"><b-icon icon="person" aria-hidden="true"></b-icon></button>
+                <input type="text"  v-model="destinatario" class="form-control" placeholder="Ingresa un correo electronico" aria-describedby="button-addon1">
+              </div>
+              <div class="input-group mb-3">
+                <button class="btn btn-dark" type="button" id="button-addon2"><b-icon icon="link" aria-hidden="true"></b-icon></button>
+                <input type="text" v-model="enlaceMeet" class="form-control" placeholder="Ingresa el enlace Meet" aria-describedby="button-addon2">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cerrar
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+                @click="sendMail(destinatario, enlaceMeet)"
+              >
+                Enviar
+              </button>
             </div>
           </div>
         </div>
@@ -121,6 +281,8 @@
 <script>
 import HeaderAdmin from '../../components/HeaderAdmin.vue';
 import Footer from '../../components/Footer.vue';
+import api from "../../util/api.js";
+
 export default {
   components: {
     HeaderAdmin,
@@ -128,16 +290,201 @@ export default {
   },
   data() {
     return {
-      form: {
-        consultor: '',
-      },
-      consultores: [
-        { value: 1, text: 'Emmanuel Estrada' },
-        { value: 2, text: 'Alan Garcia' },
-      ],
+      consultor: '',
+      namePerson: '',
+      consultorSelected: '',
+      fechaSelected: '',
+      destinatario: '',
+      enlaceMeet: '',
+      solicitud: {},
+      solicitudSelected: {},
+      solicitudes: [],
+      consultores: [],
+      consultoresFilter: []
     };
   },
-  methods: {},
+  beforeMount() {
+    this.getSolicitudes();
+    this.getConsultores();
+  },
+  methods: {
+    getSolicitudes() {
+      api
+        .doGet('saps/solicitud/getAll')
+        .then((response) => (this.solicitudes = response.data))
+        .catch((err) => {
+          let errorResponse = err.response.data;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Lo sentimos',
+              text: "Hubo un error en el servidor",
+              icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        })
+        .finally(() => (this.loading = false));
+    },
+    getConsultores() {
+      api
+        .doGet('saps/consultor/getAll')
+        .then((response) => {
+          this.consultores = response.data
+          this.consultoresFilter = response.data
+        })
+        .catch((err) => {
+          let errorResponse = err.response.data;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Oops! Ha ocurrido un error en el servidor.',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Lo sentimos',
+              text: "Hubo un error en el servidor",
+              icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        })
+        .finally(() => (this.loading = false));
+    },
+    changeStatus(solicitud, consultor) {
+      if (solicitud.estado === 'Pendiente') {
+        solicitud.estado = "Asignada";
+      } else {
+        solicitud.estado = "Pendiente";
+      }
+
+      if (consultor != null) {
+        solicitud.consultor = consultor;
+      }
+      api
+        .doPost('saps/solicitud/save', solicitud)
+        .then(() => {
+          this.$swal({
+            title: 'Solicitud modificada',
+            text: "El estado de la solicitud ha sido modificado",
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Aceptar'
+          });
+        })
+        .catch((err) => {
+          let errorResponse = err.response.data;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Lo sentimos',
+              text: "Hubo un error al registrar la solicitud",
+              icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
+            });
+          } else {
+            this.$swal({
+              title: 'Lo sentimos',
+              text: "Hubo un error en el servidor",
+              icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        })
+        .finally(() => (this.loading = false));
+    },
+    verificarConsultor(solicitud) {
+      this.solicitud = solicitud
+      this.consultoresFilter = this.consultores.filter(c => c.idConsultor != solicitud.consultor.idConsultor)
+      this.namePerson = solicitud.consultor.usuario.nombre + " " + solicitud.consultor.usuario.apellidoPaterno + " " + solicitud.consultor.usuario.apellidoMaterno
+      this.fechaSelected = solicitud.fecha;
+    },
+    asignarConsultor(solicitud) {
+      console.log(solicitud);
+      console.log(this.consultorSelected);
+      //solicitud.consultor.idConsultor = this.consultorSelected
+      /*api
+        .doPost('saps/solicitud/save', solicitud)
+        .then(() => {
+          this.$swal({
+            title: 'Solicitud modificada',
+            text: "El consultor ha sido asignado correctamente",
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Aceptar'
+          });
+        })
+        .catch((err) => {
+          let errorResponse = err.response.data;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Lo sentimos',
+              text: "Hubo un error al modificar la solicitud",
+              icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
+            });
+          } else {
+            this.$swal({
+              title: 'Lo sentimos',
+              text: "Hubo un error en el servidor",
+              icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        })
+        .finally(() => (this.loading = false));*/
+    },
+    getCorreo(mail) {
+      this.destinatario = mail;
+    }, 
+    sendMail(destino, enlace) {
+      let mail = {
+        "to": destino,
+        "linkCall": enlace
+      }
+      api
+        .doPost('saps/mail/send', mail)
+        .then(() => {
+          this.$swal({
+            title: 'Correo enviado',
+            text: "El enlace Meet ha sido enviado correctamente",
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Aceptar'
+          });
+        })
+        .catch((err) => {
+          let errorResponse = err.response.data;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Lo sentimos',
+              text: "Hubo un error al enviar el correo",
+              icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
+            });
+          } else {
+            this.$swal({
+              title: 'Lo sentimos',
+              text: "Hubo un error en el servidor",
+              icon: 'error',
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        })
+        .finally(() => (this.loading = false));
+    }
+  },
 };
 </script>
 

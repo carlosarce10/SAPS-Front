@@ -5,7 +5,7 @@
     </div>
     <!-- Card de registro -->
     <div
-      class="row inicioSesion col-6 position-absolute top-50 start-50 translate-middle shadow p-3 mb-5 rounded"
+      class="row inicioSesion col-7 position-absolute top-50 start-50 translate-middle shadow p-3 mb-5 rounded"
     >
       <img
         src="../assets/logoApoyo.png"
@@ -25,7 +25,7 @@
         Registro de Administrativo
       </h5>
       <!-- Registro datos genericos -->
-      <form @submit="onSubmit" v-if="show">
+      <form v-if="show">
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">Nombre(s)</label>
@@ -33,6 +33,7 @@
               v-model="form.nombre"
               type="text"
               class="form-control"
+              placeholder="Juan"
               required
             />
           </div>
@@ -42,6 +43,7 @@
               v-model="form.apellidoP"
               type="text"
               class="form-control"
+              placeholder="Pérez"
               required
             />
           </div>
@@ -51,6 +53,7 @@
               v-model="form.apellidoM"
               type="text"
               class="form-control"
+              placeholder="López"
               required
             />
           </div>
@@ -61,7 +64,10 @@
               type="email"
               class="form-control"
               aria-describedby="emailHelp"
+              placeholder="correo@utez.edu.mx"
               required
+              pattern=".+@utez.edu.mx"
+              title="Debe ingresar un correo institucional '@utez.edu.mx'"
             />
           </div>
           <div class="mb-3 col-4">
@@ -71,16 +77,20 @@
               :options="sexos"
               v-model="form.sexo"
               class="form-select"
-            />
+            >
+            <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+            </b-form-select>
           </div>
           <div class="mb-3 col-4">
             <label class="float-start">Tipo de usuario</label>
             <b-form-select
               required
               :options="tiposUsario"
-              v-model="form.tipoUsuario"
+              v-model="tipoUsuario"
               class="form-select"
-            />
+            >
+            <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+            </b-form-select>
           </div>
           <div class="mb-3 col-4">
             <label class="float-start">Contraseña</label>
@@ -88,18 +98,33 @@
               v-model="form.contrasenia"
               type="password"
               class="form-control"
+              placeholder="****"
               required
             />
           </div>
-          <div class="col-12">
-            <button type="submit" class="btn btn-primary mb-3 float-end">
-              Siguiente
-            </button>
+          <div class="row">
+            <div class="col-12">
+              <button
+                @click="onSubmit()"
+                type="submit"
+                class="btn btn-primary m-1 float-end"
+              >
+                Siguiente
+                <b-icon icon="arrow-right" aria-hidden="true"></b-icon>
+              </button>
+              <button
+                @click="regresarInicio()"
+                class="btn btn-danger m-1 float-end"
+              >
+                Regresar
+                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
+              </button>
+            </div>
           </div>
         </div>
       </form>
       <!-- Registro datos estudiante -->
-      <form @submit="onSubmit" v-if="estudiante">
+      <form v-if="estudiante">
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">Matricula</label>
@@ -107,6 +132,7 @@
               v-model="formAlumno.matricula"
               type="text"
               class="form-control"
+              placeholder="2021XX123"
               required
             />
           </div>
@@ -114,19 +140,35 @@
             <label class="float-start">Nivel Académico</label>
             <b-form-select
               required
-              :options="niveles"
               v-model="formAlumno.nivel"
               class="form-select"
-            />
+            >
+            <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+              <option
+                v-for="niveles in listaNiveles"
+                v-bind:key="niveles.nivel"
+                v-bind:value="niveles.idNivel"
+              >
+                {{ niveles.nivel }}
+              </option></b-form-select
+            >
           </div>
           <div class="mb-3 col-4">
             <label class="float-start">Carrera</label>
             <b-form-select
               required
-              :options="carreras"
               v-model="formAlumno.carrera"
               class="form-select"
-            />
+            >
+            <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+              <option
+                v-for="carreras in listaCarreras"
+                v-bind:key="carreras.carrera"
+                v-bind:value="carreras.idCarrera"
+              >
+                {{ carreras.carrera }}
+              </option></b-form-select
+            >
           </div>
           <div class="mb-3 col-4">
             <label class="float-start">Grado</label>
@@ -134,6 +176,7 @@
               v-model="formAlumno.grado"
               type="text"
               class="form-control"
+              placeholder="1"
               required
             />
           </div>
@@ -143,6 +186,7 @@
               v-model="formAlumno.grupo"
               type="text"
               class="form-control"
+              placeholder="A"
               required
             />
           </div>
@@ -152,79 +196,94 @@
               v-model="formAlumno.tutor"
               type="text"
               class="form-control"
+              placeholder="Juan Pérez"
               required
             />
           </div>
           <div class="row">
-            <div class="col-6">
+            <div class="col-12">
               <button
-                @click="regresar()"
-                class="btn btn-danger mb-3 float-start"
+                type="submit"
+                @click="registroEstudiante()"
+                class="btn btn-primary m-1 float-end"
               >
-                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
-              </button>
-            </div>
-            <div class="col-6">
-              <button type="submit" class="btn btn-primary mb-3 float-end">
                 Registrarme
+              </button>
+              <button @click="regresar()" class="btn btn-danger m-1 float-end">
+                Regresar
+                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
               </button>
             </div>
           </div>
         </div>
       </form>
+
       <!-- Registro datos docente -->
-      <form @submit="onSubmit" v-if="docente">
+      <form v-if="docente">
         <div class="row">
           <div class="mb-3 col-4">
-            <label class="float-start">División</label>
-            <b-form-select
-              required
-              :options="divisiones"
-              v-model="formDocente.division"
-              class="form-select"
-            />
+            <label class="float-start">División académica</label>
+            <b-form-select v-model="formDocente.division" class="form-select">
+             <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+              <option
+                v-for="div in listaDivisiones"
+                v-bind:key="div.division"
+                v-bind:value="div.idDivision"
+              >
+                {{ div.division }}
+              </option>
+            </b-form-select>
           </div>
           <div class="row">
-            <div class="col-6">
+            <div class="col-12">
               <button
-                @click="regresar()"
-                class="btn btn-danger mb-3 float-start"
+                type="submit"
+                @click="registroDocente()"
+                class="btn btn-primary m-1 float-end"
               >
-                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
-              </button>
-            </div>
-            <div class="col-6">
-              <button type="submit" class="btn btn-primary mb-3 float-end">
                 Registrarme
+              </button>
+              <button @click="regresar()" class="btn btn-danger m-1 float-end">
+                Regresar
+                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
               </button>
             </div>
           </div>
         </div>
       </form>
+
       <!-- Registro datos administrativo -->
-      <form @submit="onSubmit" v-if="administrativo">
+      <form v-if="administrativo">
         <div class="row">
           <div class="mb-3 col-4">
             <label class="float-start">Departamento</label>
             <b-form-select
-              required
-              :options="departamentos"
               v-model="formAdmin.departamento"
-              class="form-select"
-            />
+              size="sm"
+              class="form-select form-select-sm mt-3"
+            >
+              <b-form-select-option value="" disabled>Elige una opción</b-form-select-option>
+              <option
+                v-for="dep in listaDepartamentos"
+                v-bind:key="dep.departamento"
+                v-bind:value="dep.idDepartamento"
+              >
+                {{ dep.departamento }}
+              </option>
+            </b-form-select>
           </div>
           <div class="row">
-            <div class="col-6">
+            <div class="col-12">
               <button
-                @click="regresar()"
-                class="btn btn-danger mb-3 float-start"
+                type="submit"
+                @click="registroAdministrativo()"
+                class="btn btn-primary m-1 float-end"
               >
-                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
-              </button>
-            </div>
-            <div class="col-6">
-              <button type="submit" class="btn btn-primary mb-3 float-end">
                 Registrarme
+              </button>
+              <button @click="regresar()" class="btn btn-danger m-1 float-end">
+                Regresar
+                <b-icon icon="arrow-left" aria-hidden="true"></b-icon>
               </button>
             </div>
           </div>
@@ -238,6 +297,8 @@
 <script>
 import HeaderInicio from '../components/HeaderInicio.vue';
 import Footer from '../components/Footer.vue';
+import api from '../util/api';
+
 export default {
   components: {
     HeaderInicio,
@@ -250,10 +311,10 @@ export default {
         apellidoP: '',
         apellidoM: '',
         correo: '',
-        sexo: '',
-        tipoUsuario: '',
         contrasenia: '',
+        sexo: '',
       },
+      tipoUsuario: '',
       formAlumno: {
         matricula: '',
         nivel: '',
@@ -268,10 +329,16 @@ export default {
       formAdmin: {
         departamento: '',
       },
+      listaDivisiones: [],
+      listaNiveles: [],
+      listaCarreras: [],
+      listaDepartamentos: [],
+      //division: '',
       show: true,
       estudiante: false,
       administrativo: false,
       docente: false,
+      id: '',
       sexos: [
         { value: 1, text: 'Hombre' },
         { value: 2, text: 'Mujer' },
@@ -282,50 +349,229 @@ export default {
         { value: 2, text: 'Docente' },
         { value: 3, text: 'Administrativo' },
       ],
-      niveles: [
-        { value: 1, text: 'TSU' },
-        { value: 2, text: 'ING' },
-        { value: 3, text: 'LIC' },
-      ],
-      carreras: [
-        { value: 1, text: 'IDyGS' },
-        { value: 2, text: 'Diseño' },
-        { value: 3, text: 'Mecatrónica' },
-      ],
-      divisiones: [
-        { value: 1, text: 'DATIC' },
-        { value: 2, text: 'DATEFI' },
-        { value: 3, text: 'DAMI' },
-        { value: 3, text: 'DACEA' },
-      ],
-      departamentos: [
-        { value: 1, text: 'Depto. 1' },
-        { value: 2, text: 'Depto. 2' },
-        { value: 3, text: 'Depto. 3' },
-        { value: 3, text: 'Depto. 4' },
-      ],
     };
   },
+  beforeMount() {
+    this.getDivisiones();
+    this.getNiveles();
+    this.getCarreras();
+    this.getDepartamentos();
+  },
+  computed: {},
   methods: {
-    onSubmit(event) {
-      event.preventDefault();
-      alert(JSON.stringify(this.form.tipoUsuario));
-      if (this.form.tipoUsuario == '1') {
+    onSubmit() {
+      this.form = {
+        nombre: this.form.nombre,
+        apellidoPaterno: this.form.apellidoP,
+        apellidoMaterno: this.form.apellidoM,
+        correo: this.form.correo,
+        password: this.form.contrasenia,
+        sexo: this.form.sexo,
+      };
+      if (this.form !== null && this.form !== '') {
+        api
+          .doPost('auth/register/solicitante', this.form)
+          .then((response) => (this.id = response.data))
+          .then(() => {
+            this.$swal({
+              title: 'Se guardaron exitosamente tus datos',
+              icon: 'success',
+            });
+            this.onReset();
+          })
+          .catch((error) => {
+            let errorResponse = error;
+            if (errorResponse.errorExists) {
+              this.$swal({
+                title: 'Ha ocurrido un error en el servidor!',
+                html:
+                  "<span style='font-size:14pt'><b>" +
+                  errorResponse.code +
+                  '</b> ' +
+                  errorResponse.message +
+                  '<br>Para más información contacte a su operador.</span>',
+                icon: 'error',
+              });
+            } else {
+              this.$swal({
+                title: 'Ha ocurrido un error en el servidor!',
+                html:
+                  "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+                icon: 'error',
+              });
+            }
+          });
+      }
+      if (this.tipoUsuario == '1') {
         this.estudiante = true;
         this.show = false;
-      } else if (this.form.tipoUsuario == '2') {
+      } else if (this.tipoUsuario == '2') {
         this.docente = true;
         this.show = false;
-      } else if (this.form.tipoUsuario == '3') {
+      } else if (this.tipoUsuario == '3') {
         this.administrativo = true;
         this.show = false;
       }
+    },
+    getDivisiones() {
+      api
+        .doGet('saps/division/getAll')
+        .then((response) => (this.listaDivisiones = response.data));
+    },
+    getNiveles() {
+      api
+        .doGet('saps/nivel/getAll')
+        .then((response) => (this.listaNiveles = response.data));
+    },
+    getCarreras() {
+      api
+        .doGet('saps/carrera/getAll')
+        .then((response) => (this.listaCarreras = response.data));
+    },
+    getDepartamentos() {
+      api
+        .doGet('saps/departamento/getAll')
+        .then((response) => (this.listaDepartamentos = response.data));
+    },
+    registroEstudiante() {
+      this.formAlumno = {
+        matricula: this.formAlumno.matricula,
+        nivelEstudio: { idNivel: this.formAlumno.nivel },
+        carrera: { idCarrera: this.formAlumno.carrera },
+        grado: this.formAlumno.grado,
+        grupo: this.formAlumno.grupo,
+        tutor: this.formAlumno.tutor,
+      };
+      api
+        .doPost('saps/solicitud/estudiante/save/' + this.id, this.formAlumno)
+        .then(() => {
+          this.$swal({
+            title: 'Se registró exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.$router.push({ name: 'Home' });
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    registroDocente() {
+      this.formDocente = {
+        division: { idDivision: this.formDocente.division },
+      };
+      api
+        .doPost('saps/solicitud/docente/save/' + this.id, this.formDocente)
+        .then(() => {
+          this.$swal({
+            title: 'Se registró exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.$router.push({ name: 'Home' });
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
+    },
+    registroAdministrativo() {
+      this.formAdmin = {
+        departamento: { idDepartamento: this.formAdmin.departamento },
+      };
+      api
+        .doPost('saps/solicitud/administrativo/save/' + this.id, this.formAdmin)
+        .then(() => {
+          this.$swal({
+            title: 'Se registró exitosamente',
+            icon: 'success',
+          });
+          this.onReset();
+          this.$router.push({ name: 'Home' });
+        })
+        .catch((error) => {
+          let errorResponse = error;
+          if (errorResponse.errorExists) {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'><b>" +
+                errorResponse.code +
+                '</b> ' +
+                errorResponse.message +
+                '<br>Para más información contacte a su operador.</span>',
+              icon: 'error',
+            });
+          } else {
+            this.$swal({
+              title: 'Ha ocurrido un error en el servidor!',
+              html:
+                "<span style='font-size:14pt'>Para más información contacte a su operador.</span>",
+              icon: 'error',
+            });
+          }
+        });
     },
     regresar() {
       this.show = true;
       this.estudiante = false;
       this.docente = false;
       this.administrativo = false;
+    },
+    regresarInicio() {
+      this.$router.push({ name: 'Home' });
+    },
+    onReset() {
+      this.form.nombre = '';
+      this.form.apellidoP = '';
+      this.form.apellidoM = '';
+      this.form.correo = '';
+      this.form.sexo = '';
+      this.form.tipoUsuario = '';
+      this.form.contrasenia = '';
+      this.formAlumno.matricula;
+      this.formAlumno.nivel;
+      this.formAlumno.carrera;
+      this.formAlumno.grado;
+      this.formAlumno.grupo;
+      this.formAlumno.tutor;
     },
   },
 };
